@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/sections/Hero.astro';
+import Trust from '../../components/sections/Trust.astro';
+import Ispo from '../../components/sections/Ispo.astro';
+import Categories from '../../components/sections/Categories.astro';
+import BuildWays from '../../components/sections/BuildWays.astro';
+import FactoryAbout from '../../components/sections/FactoryAbout.astro';
+import FinalCta from '../../components/sections/FinalCta.astro';
+import { langFromParam, langPaths } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+---
+<Base lang={lang} path="/">
+  <Hero lang={lang} />
+  <Trust lang={lang} />
+  <Ispo lang={lang} />
+  <Categories lang={lang} />
+  <BuildWays lang={lang} />
+  <FactoryAbout lang={lang} />
+  <FinalCta lang={lang} />
+</Base>

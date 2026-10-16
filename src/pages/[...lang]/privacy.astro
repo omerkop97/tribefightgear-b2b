@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { langFromParam, langPaths, localePath, t } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+---
+<Base lang={lang} path="/privacy" title={d.privacy.title}>
+  <PageHero title={d.privacy.title} crumbs={[{ label: 'Home', href: localePath(lang, '/') }]} />
+  <section class="section--tight">
+    <div class="container text">
+      {d.privacy.paragraphs.map((p) => <p>{p}</p>)}
+      <p class="muted">{d.privacy.updated}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .text { display: grid; gap: 20px; }
+  .text p { color: var(--ink-2); max-width: 70ch; }
+</style>

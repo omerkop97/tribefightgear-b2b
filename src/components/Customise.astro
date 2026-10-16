@@ -1,0 +1,48 @@
+---
+import { t, type Lang } from '../i18n';
+
+/** Close-ups are crops of existing product photos (zoomed via object-position). */
+interface Props { lang: Lang; closeups: { src: string; focus: string }[]; }
+const { lang, closeups } = Astro.props;
+const d = t(lang).products.customise;
+---
+<section class="cz section">
+  <div class="container">
+    <div class="section-head section-head--split">
+      <div class="cz__title">
+        <span class="eyebrow">{d.eyebrow}</span>
+        <h2 class="display-l" data-split>{d.title}</h2>
+      </div>
+      <p class="lead" data-reveal>{d.body}</p>
+    </div>
+    <div class="cz__grid" data-reveal-stagger>
+      {d.items.map((item, i) => {
+        const c = closeups[i % Math.max(1, closeups.length)];
+        return (
+          <article class="cz__item">
+            <div class="cz__img stage">
+              {c && <img src={c.src} alt="" loading="lazy" style={`object-position:${c.focus};transform-origin:${c.focus}`} width="1400" height="1400" />}
+              <span class="cz__n">0{i + 1}</span>
+            </div>
+            <h3 class="display-s">{item.title}</h3>
+            <p class="muted">{item.body}</p>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cz { background: var(--bg-2); border-block: 1px solid var(--line); }
+  .cz__title { display: grid; gap: 16px; }
+  .cz__grid { display: grid; gap: 20px; }
+  @media (min-width: 700px) { .cz__grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1100px) { .cz__grid { grid-template-columns: repeat(3, 1fr); } }
+  .cz__item { display: grid; gap: 14px; align-content: start; padding: 14px 14px 24px; background: var(--surface); border: 1px solid var(--line); }
+  .cz__item h3, .cz__item p { padding-inline: 8px; }
+  .cz__img { aspect-ratio: 16 / 10; }
+  .cz__img img { object-fit: cover; transform: scale(2.1); filter: none; transition: transform 1.2s var(--ease); }
+  .cz__item:hover .cz__img img { transform: scale(2.35); }
+  .cz__n { position: absolute; left: 14px; top: 12px; z-index: 2; font-family: var(--font-display); font-weight: 700; color: var(--accent); letter-spacing: 0.1em; }
+</style>

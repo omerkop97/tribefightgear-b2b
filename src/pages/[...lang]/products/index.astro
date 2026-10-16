@@ -1,0 +1,69 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHero from '../../../components/PageHero.astro';
+import CategoryCard from '../../../components/CategoryCard.astro';
+import FinalCta from '../../../components/sections/FinalCta.astro';
+import { CATEGORIES, TIERS, type TierId } from '../../../data/products';
+import { langFromParam, langPaths, localePath, t } from '../../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+const tierIds = Object.keys(TIERS) as TierId[];
+---
+<Base lang={lang} path="/products" title={d.nav.products} description={d.products.body}>
+  <PageHero
+    eyebrow={d.categories.eyebrow}
+    title={d.products.title}
+    body={d.products.body}
+    word="Equipment"
+    crumbs={[{ label: 'Home', href: localePath(lang, '/') }]}
+  />
+
+  <section class="section--tight">
+    <div class="container grid" data-reveal-stagger>
+      {CATEGORIES.map((c, i) => <CategoryCard category={c} index={i} lang={lang} />)}
+    </div>
+  </section>
+
+  <section class="section tiers">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">{d.categories.tiersNote}</span>
+        <h2 class="display-l" data-split>{d.products.tierTitle}</h2>
+      </div>
+      <div class="tiers__grid" data-reveal-stagger>
+        {tierIds.map((id, i) => (
+          <article class:list={['tier', `tier--${id}`]}>
+            <div class="tier__bar"><span style={`width:${(i + 1) * 33.33}%`}></span></div>
+            <span class="tier__n">0{i + 1}</span>
+            <h3 class="display-m">{TIERS[id].name}</h3>
+            <p class="tier__tag">{TIERS[id].tagline[lang]}</p>
+            <p class="muted">{TIERS[id].body[lang]}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <FinalCta lang={lang} />
+</Base>
+
+<style>
+  .grid { display: grid; gap: 20px; }
+  @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1200px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  .tiers { border-top: 1px solid var(--line); }
+  .tiers__grid { display: grid; gap: 20px; }
+  @media (min-width: 900px) { .tiers__grid { grid-template-columns: repeat(3, 1fr); } }
+  .tier { display: grid; gap: 14px; padding: 32px; border: 1px solid var(--line); background: var(--surface); align-content: start; }
+  .tier__bar { height: 4px; background: var(--line); }
+  .tier__bar span { display: block; height: 100%; background: var(--accent); }
+  .tier__n { font-family: var(--font-display); font-weight: 700; color: var(--accent); letter-spacing: 0.1em; margin-top: 12px; }
+  .tier__tag { font-weight: 600; }
+  .tier--elite { background: var(--panel-bg); color: var(--panel-ink); border-color: color-mix(in srgb, var(--sand) 45%, transparent); }
+  .tier--elite .muted { color: color-mix(in srgb, var(--panel-ink) 70%, transparent); }
+  .tier--elite .tier__n { color: var(--sand); }
+  .tier--elite .tier__bar { background: color-mix(in srgb, var(--panel-ink) 18%, transparent); }
+  .tier--elite .tier__bar span { background: var(--sand); }
+</style>

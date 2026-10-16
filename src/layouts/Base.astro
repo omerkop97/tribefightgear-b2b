@@ -1,0 +1,67 @@
+---
+import '../styles/global.css';
+import IspoBanner from '../components/IspoBanner.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_NAME } from '../data/site';
+import { LANGS, localePath, t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  /** Language-neutral path, e.g. "/products/gloves", used for hreflang and the language switch. */
+  path: string;
+  title?: string;
+  description?: string;
+}
+
+const { lang, path, title, description } = Astro.props;
+const d = t(lang);
+const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Premium Fight Gear Manufacturing`;
+const desc = description ?? d.meta.description;
+const canonical = new URL(localePath(lang, path), Astro.site);
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(localePath(l, path), Astro.site)} />)}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={new URL('/images/products/gloves/warrior/1-1400.webp', Astro.site)} />
+    <meta name="theme-color" content="#f3efe4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0b08" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        try {
+          var s = localStorage.getItem('theme');
+          if (s === 'light' || s === 'dark') d.setAttribute('data-theme', s);
+        } catch (e) {}
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          d.classList.add('motion');
+          // Fail-safe: never leave content hidden if the motion script does not run.
+          setTimeout(function () { if (!window.__motionReady) d.classList.remove('motion'); }, 2500);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <IspoBanner lang={lang} />
+    <Header lang={lang} path={path} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <script>
+      import '../scripts/motion';
+      import '../scripts/ui';
+    </script>
+  </body>
+</html>

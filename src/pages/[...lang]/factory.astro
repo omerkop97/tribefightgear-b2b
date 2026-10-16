@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Process from '../../components/Process.astro';
+import FinalCta from '../../components/sections/FinalCta.astro';
+import Icon from '../../components/Icon.astro';
+import { whatsappUrl } from '../../data/site';
+import { langFromParam, langPaths, localePath, t } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+---
+<Base lang={lang} path="/factory" title={d.pages.factory.title} description={d.pages.factory.body}>
+  <PageHero eyebrow={d.factory.eyebrow} title={d.pages.factory.title} body={d.pages.factory.body} word="Factory" crumbs={[{ label: 'Home', href: localePath(lang, '/') }]} />
+
+  <section class="section">
+    <div class="container fac">
+      <div class="fac__copy">
+        <h2 class="display-l" data-split>{d.factory.title[0]}<br /><span class="accent">{d.factory.title[1]}</span></h2>
+        <p class="lead" data-reveal>{d.factory.body}</p>
+        <div data-reveal><a class="btn btn--primary" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener">{d.factory.cta} <Icon name="arrow" /></a></div>
+      </div>
+      <div class="fac__media stage grain" data-clip>
+        <!-- Factory video goes here: <video autoplay muted loop playsinline src="/video/factory.mp4"> -->
+        <div class="fac__ph"><span class="fac__play"><Icon name="play" /></span>{d.factory.video}</div>
+      </div>
+    </div>
+    <div class="container">
+      <ol class="steps" data-reveal-stagger>
+        {d.factory.steps.map((s, i) => <li><span>{String(i + 1).padStart(2, '0')}</span>{s}</li>)}
+      </ol>
+      <Process lang={lang} />
+    </div>
+  </section>
+
+  <section class="section quality">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">QC</span><h2 class="display-l" data-split>{d.pages.factoryQuality.title}</h2></div>
+      <div class="q" data-reveal-stagger>
+        {d.pages.factoryQuality.items.map((q, i) => (
+          <article><span>0{i + 1}</span><h3 class="display-s">{q.title}</h3><p class="muted">{q.body}</p></article>
+        ))}
+      </div>
+    </div>
+  </section>
+  <FinalCta lang={lang} />
+</Base>
+
+<style>
+  .fac { display: grid; gap: 40px; align-items: center; }
+  .fac__copy { display: grid; gap: 24px; justify-items: start; }
+  .fac__media { aspect-ratio: 16 / 10; display: grid; place-items: center; }
+  .fac__ph { position: relative; z-index: 2; display: grid; justify-items: center; gap: 16px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); }
+  .fac__play { width: 84px; height: 84px; border-radius: 50%; background: var(--accent-fill); color: var(--on-accent); display: grid; place-items: center; box-shadow: 0 0 0 12px var(--accent-soft); }
+  .fac__play :global(svg) { width: 30px; height: 30px; margin-left: 4px; }
+  @media (min-width: 1024px) { .fac { grid-template-columns: 1fr 1.15fr; gap: 72px; } }
+  .steps { list-style: none; padding: 0; margin: clamp(48px, 6vw, 80px) 0 0; display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .steps li { display: flex; gap: 12px; align-items: baseline; padding: 24px 20px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: clamp(1.1rem, 1.6vw, 1.5rem); }
+  .steps li span { font-size: 0.8rem; color: var(--accent); }
+  @media (min-width: 900px) { .steps { grid-template-columns: repeat(4, 1fr); } }
+  .quality { border-top: 1px solid var(--line); background: var(--bg-2); }
+  .q { display: grid; gap: 20px; }
+  @media (min-width: 900px) { .q { grid-template-columns: repeat(3, 1fr); } }
+  .q article { display: grid; gap: 14px; padding: 32px; background: var(--surface); border: 1px solid var(--line); align-content: start; }
+  .q span { font-family: var(--font-display); font-weight: 800; font-size: 3rem; line-height: 0.8; color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+</style>

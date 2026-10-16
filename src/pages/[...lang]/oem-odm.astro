@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import BuildWays from '../../components/sections/BuildWays.astro';
+import FinalCta from '../../components/sections/FinalCta.astro';
+import Icon from '../../components/Icon.astro';
+import { langFromParam, langPaths, localePath, t } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+---
+<Base lang={lang} path="/oem-odm" title={d.pages.build.title} description={d.pages.build.body}>
+  <PageHero eyebrow={d.build.eyebrow} title={d.pages.build.title} body={d.pages.build.body} word="Build" crumbs={[{ label: 'Home', href: localePath(lang, '/') }]} />
+  <BuildWays lang={lang} detailed />
+  <section class="section--tight need">
+    <div class="container need__grid">
+      <h2 class="display-m" data-split>{d.pages.buildNeed.title}</h2>
+      <ol data-reveal-stagger>
+        {d.pages.buildNeed.items.map((item, i) => <li><span>0{i + 1}</span>{item}<Icon name="check" /></li>)}
+      </ol>
+    </div>
+  </section>
+  <FinalCta lang={lang} />
+</Base>
+
+<style>
+  .need { border-top: 1px solid var(--line); }
+  .need__grid { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .need__grid { grid-template-columns: 1fr 1.3fr; gap: 72px; } }
+  ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  li { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 12px; padding: 22px 0; border-bottom: 1px solid var(--line); font-size: 1.1rem; }
+  li span { font-family: var(--font-display); font-weight: 700; color: var(--accent); }
+  li :global(svg) { width: 20px; height: 20px; color: var(--accent); }
+</style>

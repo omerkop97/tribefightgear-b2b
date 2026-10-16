@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import { BOOKING_URL, EMAIL, ISPO, PHONE_DISPLAY, PHONE_E164, whatsappUrl } from '../../data/site';
+import { langFromParam, langPaths, localePath, t } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+const c = d.pages.contact;
+const cards = [
+  { icon: 'calendar' as const, title: c.bookTitle, body: c.bookBody, href: BOOKING_URL, label: d.cta.book, primary: true },
+  { icon: 'whatsapp' as const, title: c.waTitle, body: c.waBody, href: whatsappUrl(d.cta.whatsappMsg), label: 'WhatsApp', primary: false },
+  { icon: 'phone' as const, title: c.phoneTitle, body: PHONE_DISPLAY, href: `tel:+${PHONE_E164}`, label: PHONE_DISPLAY, primary: false },
+  ...(EMAIL ? [{ icon: 'mail' as const, title: c.emailTitle, body: EMAIL, href: `mailto:${EMAIL}`, label: EMAIL, primary: false }] : []),
+];
+---
+<Base lang={lang} path="/contact" title={c.title} description={c.body}>
+  <PageHero eyebrow={d.final.eyebrow} title={c.title} body={c.body} word="Contact" crumbs={[{ label: 'Home', href: localePath(lang, '/') }]} />
+  <section class="section--tight">
+    <div class="container cards" data-reveal-stagger>
+      {cards.map((card) => (
+        <a class:list={['card', { 'card--primary': card.primary }]} href={card.href} target={card.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+          <span class="card__icon"><Icon name={card.icon} /></span>
+          <h2 class="display-s">{card.title}</h2>
+          <p>{card.body}</p>
+          <span class="card__go">{card.label} <Icon name="arrow" /></span>
+        </a>
+      ))}
+    </div>
+    <div class="container ispo" data-reveal>
+      <span class="eyebrow">ISPO 2026</span>
+      <p class="display-s">{ISPO.venue} · {ISPO.dates[lang]} · {d.ispo.stand} {ISPO.stand}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cards { display: grid; gap: 20px; }
+  @media (min-width: 900px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+  .card { display: grid; gap: 16px; align-content: start; padding: 32px; min-height: 300px; background: var(--surface); border: 1px solid var(--line); transition: border-color 0.3s, transform 0.5s var(--ease); }
+  .card:hover { border-color: var(--accent); transform: translateY(-6px); }
+  .card p { color: var(--ink-2); }
+  .card__icon { width: 56px; height: 56px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+  .card__icon :global(svg) { width: 26px; height: 26px; }
+  .card__go { margin-top: auto; display: inline-flex; gap: 10px; align-items: center; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .card__go :global(svg) { width: 18px; height: 18px; }
+  .card--primary { background: var(--accent-fill); color: var(--on-accent); border-color: var(--accent-fill); }
+  .card--primary p, .card--primary .card__go { color: inherit; opacity: 0.85; }
+  .card--primary .card__icon { background: rgba(243, 239, 228, 0.14); color: inherit; }
+  .ispo { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); display: grid; gap: 12px; }
+</style>

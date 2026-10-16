@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Ispo from '../../components/sections/Ispo.astro';
+import Categories from '../../components/sections/Categories.astro';
+import FinalCta from '../../components/sections/FinalCta.astro';
+import Icon from '../../components/Icon.astro';
+import { BOOKING_URL, whatsappUrl } from '../../data/site';
+import { langFromParam, langPaths, localePath, t } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+---
+<Base lang={lang} path="/ispo-2026" title={d.pages.ispo.title} description={d.pages.ispo.body}>
+  <PageHero eyebrow={d.ispo.eyebrow} title={d.pages.ispo.title} body={d.pages.ispo.body} word="2E30" crumbs={[{ label: 'Home', href: localePath(lang, '/') }]}>
+    <div class="ctas" data-hero-in>
+      <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+      <a class="btn btn--ghost btn--wa" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener"><Icon name="whatsapp" class="wa" /> {d.cta.whatsapp}</a>
+    </div>
+  </PageHero>
+  <Ispo lang={lang} />
+  <Categories lang={lang} />
+  <FinalCta lang={lang} />
+</Base>
+
+<style>
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+</style>

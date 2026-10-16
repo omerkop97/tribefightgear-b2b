@@ -1,0 +1,36 @@
+---
+import ModelFeature from './ModelFeature.astro';
+import type { CategoryId, Model } from '../data/products';
+import { t, type Lang } from '../i18n';
+
+/** Renders models grouped by product type, mirroring the photo sub-folders (Head Guards, Shin Pads…). */
+interface Props { models: Model[]; category: CategoryId; categoryName: string; label: string; lang: Lang; }
+const { models, category, categoryName, label, lang } = Astro.props;
+const d = t(lang);
+const groups = new Map<string, Model[]>();
+for (const m of models) groups.set(m.type.en, [...(groups.get(m.type.en) ?? []), m]);
+---
+{[...groups.values()].map((group) => (
+  <div class="group">
+    <h3 class="group__title" data-reveal>
+      <span>{group[0].type[lang]}</span>
+      <small>{group.length} {group.length === 1 ? (lang === 'nl' ? 'model' : 'model') : d.products.models}</small>
+    </h3>
+    <div class="group__models">
+      {group.map((m, k) => (
+        <ModelFeature model={m} category={category} categoryName={categoryName} label={label} index={k} lang={lang} />
+      ))}
+    </div>
+  </div>
+))}
+
+<style>
+  .group + .group { margin-top: clamp(56px, 8vw, 112px); }
+  .group__title {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    padding-bottom: 16px; margin-bottom: clamp(28px, 4vw, 48px);
+    border-bottom: 2px solid var(--ink);
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+  }
+  .group__title small { font-family: var(--font-body); font-weight: 500; text-transform: none; font-size: 0.9rem; color: var(--ink-3); letter-spacing: 0; }
+</style>

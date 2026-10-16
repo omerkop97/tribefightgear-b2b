@@ -1,0 +1,45 @@
+---
+import { t, type Lang } from '../i18n';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+// Drop the portraits in /public/images/team/bart.webp and jan.webp and set `photo` below.
+const people = [
+  { ...d.about.bart, initial: 'B', photo: '' },
+  { ...d.about.jan, initial: 'J', photo: '' },
+];
+---
+<div class="people">
+  {people.map((p, i) => (
+    <article class="person" data-reveal data-delay={i * 0.12}>
+      <div class="person__photo stage grain" data-clip>
+        {p.photo ? (
+          <img src={p.photo} alt={p.name} loading="lazy" />
+        ) : (
+          <div class="person__ph">
+            <span class="person__initial">{p.initial}</span>
+            <span class="person__note">{d.about.portrait}</span>
+          </div>
+        )}
+      </div>
+      <div class="person__body">
+        <h3 class="display-s">{p.name}</h3>
+        <p class="person__role">{p.role}</p>
+        <p class="muted">{p.body}</p>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .people { display: grid; gap: 20px; }
+  .person { display: grid; gap: 20px; background: var(--surface); border: 1px solid var(--line); padding: 16px; }
+  .person__photo { aspect-ratio: 4 / 5; }
+  .person__photo img { object-fit: cover; filter: none; }
+  .person__ph { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; align-content: center; gap: 8px; }
+  .person__initial { font-family: var(--font-display); font-weight: 800; font-size: 9rem; line-height: 0.8; color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .person__note { font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .person__body { display: grid; gap: 8px; padding: 0 8px 8px; }
+  .person__role { font-weight: 600; color: var(--accent); }
+  @media (min-width: 640px) { .people { grid-template-columns: 1fr 1fr; } .person:nth-child(2) { margin-top: 64px; } }
+</style>

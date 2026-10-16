@@ -1,0 +1,25 @@
+---
+/** Two rows of product photos that drift in opposite directions while scrolling. */
+interface Props { photos: string[]; }
+const { photos } = Astro.props;
+const rows = [photos.filter((_, i) => i % 2 === 0), photos.filter((_, i) => i % 2 === 1)].filter((r) => r.length);
+---
+{photos.length > 0 && (
+  <div class="strip" aria-hidden="true">
+    {rows.map((row, r) => (
+      <div class="strip__row" data-drift={r === 0 ? '-1' : '1'}>
+        {[...row, ...row].map((src) => (
+          <div class="strip__cell stage"><img src={src} alt="" loading="lazy" width="700" height="700" /></div>
+        ))}
+      </div>
+    ))}
+  </div>
+)}
+
+<style>
+  .strip { display: grid; gap: 12px; padding-block: clamp(32px, 4vw, 56px); overflow: hidden; border-bottom: 1px solid var(--line); }
+  .strip__row { display: flex; gap: 12px; width: max-content; will-change: transform; }
+  .strip__row[data-drift='1'] { margin-left: -40vw; }
+  .strip__cell { width: clamp(150px, 16vw, 240px); aspect-ratio: 1; flex: none; border: 1px solid var(--line); }
+  .strip__cell img { padding: 10%; filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.25)); }
+</style>

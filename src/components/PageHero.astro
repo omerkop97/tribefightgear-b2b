@@ -1,0 +1,39 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body?: string;
+  crumbs?: { label: string; href: string }[];
+  word?: string;
+}
+const { eyebrow, title, body, crumbs = [], word } = Astro.props;
+---
+<section class="phero" data-hero>
+  {word && <div class="phero__word" data-hero-word aria-hidden="true">{word}</div>}
+  <div class="container phero__inner">
+    {crumbs.length > 0 && (
+      <nav class="crumbs" aria-label="Breadcrumb" data-hero-in>
+        {crumbs.map((c) => <><a href={c.href}>{c.label}</a><span>/</span></>)}
+        <span aria-current="page">{title}</span>
+      </nav>
+    )}
+    {eyebrow && <span class="eyebrow" data-hero-in>{eyebrow}</span>}
+    <h1 class:list={[title.length > 22 ? 'display-l' : 'display-xl']} data-split="load">{title}</h1>
+    {body && <p class="lead" data-hero-in>{body}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .phero { position: relative; overflow: hidden; isolation: isolate; padding-block: clamp(56px, 9vw, 120px) clamp(48px, 6vw, 80px); border-bottom: 1px solid var(--line); }
+  .phero__inner { display: grid; gap: 24px; justify-items: start; }
+  .phero h1 { max-width: 16ch; }
+  .phero__word {
+    position: absolute; right: -1vw; bottom: -0.12em; z-index: -1;
+    font-family: var(--font-display); font-weight: 800; text-transform: uppercase;
+    font-size: clamp(7rem, 22vw, 22rem); line-height: 0.8; white-space: nowrap;
+    color: transparent; -webkit-text-stroke: 1.5px var(--line-strong); pointer-events: none;
+  }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; color: var(--ink-3); letter-spacing: 0.04em; }
+  .crumbs a:hover { color: var(--accent); }
+</style>

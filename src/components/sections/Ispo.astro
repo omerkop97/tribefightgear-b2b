@@ -1,0 +1,146 @@
+---
+import QRCode from 'qrcode';
+import emblem from '../../assets/brand/emblem.svg?raw';
+import Icon from '../Icon.astro';
+import { BOOKING_URL, ISPO, whatsappUrl } from '../../data/site';
+import { t, type Lang } from '../../i18n';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+const qrMessage = lang === 'nl'
+  ? `Hoi Tribe Gear, ik wil graag een meeting plannen op ISPO 2026 (stand ${ISPO.stand}).`
+  : `Hi Tribe Gear, I'd like to book a meeting at ISPO 2026 (stand ${ISPO.stand}).`;
+const qr = await QRCode.toString(whatsappUrl(qrMessage), {
+  type: 'svg',
+  margin: 0,
+  errorCorrectionLevel: 'M',
+  color: { dark: '#1c2110', light: '#00000000' },
+});
+const facts = [
+  { label: d.ispo.where, value: ISPO.venue, icon: 'pin' as const },
+  { label: d.ispo.when, value: ISPO.dates[lang], icon: 'calendar' as const },
+  { label: d.ispo.stand, value: ISPO.stand, icon: 'check' as const },
+];
+---
+<section class="ispo section" id="ispo">
+  <div class="ispo__lines" aria-hidden="true"></div>
+  <div class="container ispo__grid">
+    <div class="ispo__copy">
+      <span class="eyebrow">{d.ispo.eyebrow}</span>
+      <h2 class="display-l" data-split>
+        {d.ispo.title[0]}<br /><span class="ispo__accent">{d.ispo.title[1]}</span>
+      </h2>
+      <p class="lead" data-reveal>{d.ispo.body}</p>
+
+      <div class="ispo__facts" data-reveal-stagger>
+        {facts.map((f) => (
+          <div class="fact">
+            <Icon name={f.icon} />
+            <span class="fact__label">{f.label}</span>
+            <span class="fact__value">{f.value}</span>
+          </div>
+        ))}
+      </div>
+
+      <ul class="ispo__actions" data-reveal-stagger>
+        {d.ispo.actions.map((a) => <li><Icon name="check" /> {a}</li>)}
+      </ul>
+
+      <div class="ispo__ctas" data-reveal>
+        <a class="btn btn--light" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+        <a class="btn btn--outline-light" href={whatsappUrl(qrMessage)} target="_blank" rel="noopener"><Icon name="whatsapp" /> {d.cta.whatsapp}</a>
+      </div>
+    </div>
+
+    <div class="ispo__qr" data-reveal="scale">
+      <div class="qr">
+        <div class="qr__head">
+          <span class="qr__brand"><span class="qr__emblem" set:html={emblem} />ISPO 2026</span>
+          <span>{d.ispo.stand} {ISPO.stand}</span>
+        </div>
+        <div class="qr__code" set:html={qr} />
+        <div class="qr__foot">
+          <strong>{d.ispo.qr}</strong>
+          <span>{d.ispo.qrNote}</span>
+        </div>
+      </div>
+      <div class="ispo__stand" aria-hidden="true">{ISPO.stand}</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ispo {
+    --olive: #1c2110;
+    background: var(--olive);
+    color: #efece2;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .ispo .lead { color: rgba(239, 236, 226, 0.75); }
+  .ispo .eyebrow { color: #b9c47f; }
+  .ispo__accent { color: #b9c47f; }
+  .ispo__lines {
+    position: absolute; inset: 0; z-index: -1; opacity: 0.5;
+    background-image: linear-gradient(rgba(239, 236, 226, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(239, 236, 226, 0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at 70% 50%, #000 0%, transparent 75%);
+  }
+  .ispo__grid { display: grid; gap: 56px; align-items: center; }
+  .ispo__copy { display: grid; gap: 28px; }
+  .ispo__facts { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid rgba(239, 236, 226, 0.16); }
+  .fact { display: grid; gap: 4px; padding: 20px; border-left: 1px solid rgba(239, 236, 226, 0.16); }
+  .fact:first-child { border-left: 0; }
+  .fact :global(svg) { width: 20px; height: 20px; color: #b9c47f; margin-bottom: 8px; }
+  .fact__label { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(239, 236, 226, 0.55); }
+  .fact__value { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.15rem, 1.8vw, 1.5rem); text-transform: uppercase; line-height: 1.1; }
+  .ispo__actions { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+  .ispo__actions li { display: flex; align-items: center; gap: 10px; color: rgba(239, 236, 226, 0.85); }
+  .ispo__actions :global(svg) { width: 18px; height: 18px; color: #b9c47f; flex: none; }
+  .ispo__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn--light { background: #efece2; color: var(--olive); }
+  .btn--light::after { background: #ffffff; }
+  .btn--outline-light { border: 1.5px solid rgba(239, 236, 226, 0.35); color: #efece2; }
+  .btn--outline-light::after { background: #efece2; }
+  .btn--outline-light:hover { color: var(--olive); }
+
+  .ispo__qr { position: relative; display: grid; place-items: center; }
+  .ispo__stand {
+    position: absolute; z-index: -1; inset: auto 0 -6% auto;
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(8rem, 18vw, 17rem); line-height: 0.8;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(185, 196, 127, 0.35);
+  }
+  .qr {
+    width: min(100%, 360px);
+    background: #efece2;
+    color: var(--olive);
+    padding: 24px;
+    display: grid;
+    gap: 20px;
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.6);
+    rotate: -2deg;
+    transition: rotate 0.6s var(--ease);
+  }
+  .qr:hover { rotate: 0deg; }
+  .qr__head { display: flex; justify-content: space-between; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1.5px solid var(--olive); padding-bottom: 12px; }
+  .qr__head { align-items: center; }
+  .qr__brand { display: inline-flex; align-items: center; gap: 10px; }
+  .qr__emblem { width: 40px; display: block; }
+  .qr__emblem :global(svg) { width: 100%; height: auto; display: block; }
+  .qr__code :global(svg) { width: 100%; height: auto; }
+  .qr__foot { display: grid; gap: 4px; border-top: 1.5px solid var(--olive); padding-top: 12px; }
+  .qr__foot strong { font-family: var(--font-display); font-size: 1.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .qr__foot span { font-size: 0.85rem; opacity: 0.75; }
+
+  @media (min-width: 1024px) {
+    .ispo__grid { grid-template-columns: 1.35fr 1fr; gap: 80px; }
+  }
+  @media (max-width: 600px) {
+    .ispo__facts { grid-template-columns: 1fr; }
+    .fact { border-left: 0; border-top: 1px solid rgba(239, 236, 226, 0.16); grid-template-columns: auto 1fr; align-items: center; column-gap: 12px; }
+    .fact:first-child { border-top: 0; }
+    .fact :global(svg) { margin: 0; grid-row: span 2; }
+    .ispo__actions { grid-template-columns: 1fr; }
+    .ispo__ctas .btn { width: 100%; }
+  }
+</style>

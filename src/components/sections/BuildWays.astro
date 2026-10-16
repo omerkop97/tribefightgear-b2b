@@ -1,0 +1,74 @@
+---
+import Icon from '../Icon.astro';
+import Process from '../Process.astro';
+import { localePath, t, type Lang } from '../../i18n';
+
+interface Props { lang: Lang; detailed?: boolean; }
+const { lang, detailed = false } = Astro.props;
+const d = t(lang);
+---
+<section class="build section" id="build">
+  <div class="container">
+    {!detailed && (
+      <div class="section-head section-head--split">
+        <div class="build__title">
+          <span class="eyebrow">{d.build.eyebrow}</span>
+          <h2 class="display-l" data-split>{d.build.title}</h2>
+        </div>
+        <p class="lead" data-reveal>{d.build.body}</p>
+      </div>
+    )}
+
+    <div class="ways" data-reveal-stagger>
+      {d.build.ways.map((w, i) => (
+        <article class="way" id={w.id}>
+          <div class="way__top">
+            <span class="way__num">0{i + 1}</span>
+            <span class="way__line"></span>
+          </div>
+          <h3 class="display-s">{w.name}</h3>
+          <p class="way__lead">{w.lead}</p>
+          <p class="muted">{w.body}</p>
+          <ul>
+            {w.points.map((pt) => <li><Icon name="check" /> {pt}</li>)}
+          </ul>
+          {!detailed && (
+            <a class="link-arrow" href={localePath(lang, `/oem-odm#${w.id}`)}>{d.cta.explore} <Icon name="arrow" /></a>
+          )}
+        </article>
+      ))}
+    </div>
+
+    <Process lang={lang} />
+  </div>
+</section>
+
+<style>
+  .build__title { display: grid; gap: 16px; }
+  .ways { display: grid; gap: 20px; }
+  .way {
+    position: relative;
+    display: grid; gap: 16px; align-content: start;
+    padding: clamp(24px, 3vw, 40px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    transition: border-color 0.4s var(--ease), transform 0.5s var(--ease);
+    scroll-margin-top: 120px;
+  }
+  .way::before {
+    content: ''; position: absolute; inset: 0; background: var(--accent-soft);
+    transform: scaleY(0); transform-origin: bottom; transition: transform 0.6s var(--ease); z-index: 0;
+  }
+  .way > * { position: relative; z-index: 1; }
+  .way:hover { border-color: var(--accent); transform: translateY(-6px); }
+  .way:hover::before { transform: scaleY(1); }
+  .way__top { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .way__num { font-family: var(--font-display); font-weight: 800; font-size: 4.2rem; line-height: 0.8; color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .way__line { flex: 1; height: 1px; background: var(--line-strong); }
+  .way__lead { font-weight: 600; color: var(--accent); }
+  .way ul { list-style: none; margin: 4px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); display: grid; gap: 8px; font-size: 0.95rem; }
+  .way li { display: flex; gap: 10px; align-items: center; }
+  .way li :global(svg) { width: 16px; height: 16px; color: var(--accent); flex: none; }
+  @media (min-width: 900px) { .ways { grid-template-columns: repeat(3, 1fr); } }
+</style>

@@ -1,0 +1,175 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { BOOKING_URL } from '../data/site';
+import { CATEGORIES } from '../data/products';
+import { localePath, t, type Lang } from '../i18n';
+
+interface Props { lang: Lang; path: string; }
+const { lang, path } = Astro.props;
+const d = t(lang);
+const p = (to: string) => localePath(lang, to);
+const other: Lang = lang === 'en' ? 'nl' : 'en';
+const isActive = (to: string) => path === to || path.startsWith(to + '/');
+
+const links = [
+  { to: '/oem-odm', label: d.nav.build },
+  { to: '/factory', label: d.nav.factory },
+  { to: '/about', label: d.nav.about },
+  { to: '/ispo-2026', label: d.nav.ispo },
+  { to: '/contact', label: d.nav.contact },
+];
+---
+<header class="header" data-header>
+  <div class="header__inner container">
+    <a href={p('/')} class="header__logo"><Logo /></a>
+
+    <nav class="nav" aria-label="Main">
+      <div class="nav__item nav__item--drop">
+        <a href={p('/products')} class:list={['nav__link', { 'is-active': isActive('/products') }]}>
+          {d.nav.products} <Icon name="chevron" />
+        </a>
+        <div class="drop">
+          <div class="drop__inner">
+            {CATEGORIES.map((c, i) => (
+              <a href={p(`/products/${c.id}`)} class="drop__link">
+                <span class="drop__num">0{i + 1}</span>
+                <span class="drop__name">{c.name[lang]}</span>
+                <span class="drop__desc">{c.short[lang]}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+      {links.map((l) => (
+        <div class="nav__item">
+          <a href={p(l.to)} class:list={['nav__link', { 'is-active': isActive(l.to) }]}>{l.label}</a>
+        </div>
+      ))}
+    </nav>
+
+    <div class="header__tools">
+      <a class="tool tool--lang" href={localePath(other, path)} hreflang={other} lang={other} aria-label={other === 'nl' ? 'Nederlands' : 'English'}>
+        <span class:list={{ on: lang === 'en' }}>EN</span><span class="sep">/</span><span class:list={{ on: lang === 'nl' }}>NL</span>
+      </a>
+      <button class="tool tool--theme" type="button" data-theme-toggle aria-label={d.nav.theme} title={d.nav.theme}>
+        <Icon name="sun" class="i-sun" />
+        <Icon name="moon" class="i-moon" />
+      </button>
+      <a class="btn btn--primary btn--sm header__cta" href={BOOKING_URL} target="_blank" rel="noopener">
+        <Icon name="calendar" /> {d.nav.book}
+      </a>
+      <button class="tool tool--menu" type="button" data-menu-open aria-expanded="false" aria-controls="mobile-menu">
+        <span class="sr-only">{d.nav.menu}</span>
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mmenu" id="mobile-menu" data-menu hidden>
+  <div class="mmenu__top container">
+    <a href={p('/')}><Logo /></a>
+    <button class="tool" type="button" data-menu-close><span class="sr-only">{d.nav.close}</span><Icon name="close" /></button>
+  </div>
+  <nav class="mmenu__nav container" aria-label="Mobile">
+    <a href={p('/products')} class="mmenu__link">{d.nav.products}</a>
+    <div class="mmenu__sub">
+      {CATEGORIES.map((c) => <a href={p(`/products/${c.id}`)}>{c.name[lang]}</a>)}
+    </div>
+    {links.map((l) => <a href={p(l.to)} class="mmenu__link">{l.label}</a>)}
+  </nav>
+  <div class="mmenu__foot container">
+    <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+  </div>
+</div>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    transition: background-color 0.4s var(--ease), border-color 0.4s var(--ease), transform 0.5s var(--ease), height 0.4s var(--ease);
+    border-bottom: 1px solid transparent;
+  }
+  .header.is-scrolled {
+    --header-h: 64px;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border-color: var(--line);
+  }
+  .header.is-hidden { transform: translateY(-100%); }
+  .header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+
+  .nav { display: none; align-items: center; gap: 4px; }
+  .nav__item { position: relative; }
+  .nav__link {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 10px 14px;
+    font-family: var(--font-display); font-weight: 600; font-size: 1.02rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-2);
+    transition: color 0.25s;
+    position: relative;
+  }
+  .nav__link :global(svg) { width: 14px; height: 14px; }
+  .nav__link::after {
+    content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 2px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--ease);
+  }
+  .nav__link:hover, .nav__link.is-active { color: var(--ink); }
+  .nav__link:hover::after, .nav__link.is-active::after { transform: scaleX(1); }
+
+  .drop {
+    position: absolute; top: 100%; left: -12px; padding-top: 12px;
+    opacity: 0; visibility: hidden; transform: translateY(8px);
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), visibility 0.3s;
+  }
+  .nav__item--drop:hover .drop, .nav__item--drop:focus-within .drop { opacity: 1; visibility: visible; transform: none; }
+  .drop__inner { width: 560px; display: grid; grid-template-columns: 1fr 1fr; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .drop__link { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; padding: 20px; border: 1px solid var(--line); margin: -1px 0 0 -1px; transition: background-color 0.25s; }
+  .drop__link:hover { background: var(--accent-soft); }
+  .drop__num { font-family: var(--font-display); color: var(--accent); font-weight: 700; grid-row: span 2; }
+  .drop__name { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: 1.15rem; letter-spacing: 0.03em; }
+  .drop__desc { font-size: 0.85rem; color: var(--ink-2); line-height: 1.45; }
+
+  .header__tools { display: flex; align-items: center; gap: 8px; }
+  .tool { height: 42px; min-width: 42px; display: inline-grid; place-items: center; border: 1px solid var(--line); color: var(--ink); transition: border-color 0.25s, background-color 0.25s; }
+  .tool:hover { border-color: var(--ink); }
+  .tool :global(svg) { width: 19px; height: 19px; }
+  .tool--lang { display: inline-flex; gap: 4px; padding: 0 12px; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; color: var(--ink-3); }
+  .tool--lang .on { color: var(--ink); }
+  .tool--lang .sep { opacity: 0.4; }
+  .tool--theme :global(.i-moon) { display: none; }
+  :global([data-theme-current='dark']) .tool--theme :global(.i-sun) { display: none; }
+  :global([data-theme-current='dark']) .tool--theme :global(.i-moon) { display: block; }
+  .header__cta { display: none; }
+
+  @media (min-width: 1180px) {
+    .nav { display: flex; }
+    .header__cta { display: inline-flex; }
+    .tool--menu { display: none; }
+  }
+  @media (max-width: 480px) { :global(.logo__sub) { display: none; } }
+
+  /* Mobile menu */
+  .mmenu {
+    position: fixed; inset: 0; z-index: 90;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .mmenu[hidden] { display: none; }
+  .mmenu__top { height: 76px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+  .mmenu__nav { display: flex; flex-direction: column; padding-block: 24px; flex: 1; }
+  .mmenu__link {
+    font-family: var(--font-display); font-weight: 800; text-transform: uppercase;
+    font-size: clamp(2.2rem, 10vw, 3.4rem); line-height: 1.1; padding-block: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mmenu__sub { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 12px 0 18px; border-bottom: 1px solid var(--line); }
+  .mmenu__sub a { color: var(--ink-2); font-size: 0.95rem; }
+  .mmenu__foot { padding-bottom: 32px; }
+  .mmenu__foot .btn { width: 100%; }
+</style>

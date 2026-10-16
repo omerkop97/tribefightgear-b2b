@@ -1,0 +1,274 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Icon from '../../../components/Icon.astro';
+import ModelGroups from '../../../components/ModelGroups.astro';
+import PhotoStrip from '../../../components/PhotoStrip.astro';
+import Customise from '../../../components/Customise.astro';
+import FinalCta from '../../../components/sections/FinalCta.astro';
+import { CATEGORIES, TIERS, img, srcset, type Category } from '../../../data/products';
+import { BOOKING_URL, whatsappUrl } from '../../../data/site';
+import { LANGS, DEFAULT_LANG, langFromParam, localePath, t } from '../../../i18n';
+
+export function getStaticPaths() {
+  return LANGS.flatMap((lang) =>
+    CATEGORIES.map((category) => ({
+      params: { lang: lang === DEFAULT_LANG ? undefined : lang, category: category.id },
+      props: { category },
+    })),
+  );
+}
+
+const { category: c } = Astro.props as { category: Category };
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+const idx = CATEGORIES.findIndex((x) => x.id === c.id);
+const next = CATEGORIES[(idx + 1) % CATEGORIES.length];
+
+const collections = c.collections ?? [];
+const models = [...c.tiers.flatMap((tier) => tier.models), ...collections.flatMap((col) => col.models)];
+const photoCount = models.reduce((n, m) => n + m.images, 0);
+const allPhotos = models.flatMap((m) => Array.from({ length: m.images }, (_, k) => img(c.id, m.slug, k + 1, 700)));
+const cover = models.find((m) => m.slug === c.cover) ?? models[0];
+const coverAlt = cover ? models.find((m) => m.slug !== cover.slug) : undefined;
+
+// Tiers with photographed models get a full section; the others are bundled into one "next levels" block.
+const fullTiers = c.tiers.filter((tier) => tier.models.length > 0);
+const plannedTiers = c.tiers.filter((tier) => tier.planned);
+
+// Close-ups for the customisation section: zoom into areas of real product shots.
+const focusPoints = ['50% 72%', '30% 40%', '62% 30%', '50% 50%', '70% 70%', '40% 25%'];
+const closeups = models.length
+  ? focusPoints.map((focus, i) => {
+      const m = models[i % models.length];
+      return { src: img(c.id, m.slug, (i % m.images) + 1, 1400), focus };
+    })
+  : [];
+---
+<Base lang={lang} path={`/products/${c.id}`} title={c.name[lang]} description={c.intro[lang]}>
+  <section class="chero" data-hero>
+    <div class="chero__word" data-hero-word aria-hidden="true">{c.name.en.split(' ')[0]}</div>
+    <div class="container chero__grid">
+      <div class="chero__copy">
+        <nav class="crumbs" aria-label="Breadcrumb" data-hero-in>
+          <a href={localePath(lang, '/')}>Home</a><span>/</span>
+          <a href={localePath(lang, '/products')}>{d.nav.products}</a><span>/</span>
+          <span aria-current="page">{c.name[lang]}</span>
+        </nav>
+        <span class="eyebrow" data-hero-in>{`0${idx + 1} / 0${CATEGORIES.length}`} · {d.nav.products}</span>
+        <h1 class:list={['chero__title', c.name[lang].length > 12 ? 'display-l' : 'display-xl']} data-split="load">{c.name[lang]}</h1>
+        <p class="lead" data-hero-in>{c.intro[lang]}</p>
+        <dl class="chero__stats" data-hero-in>
+          <div><dt>{d.products.models}</dt><dd>{models.length}</dd></div>
+          <div><dt>{d.products.photos}</dt><dd>{photoCount}</dd></div>
+          <div><dt>{d.products.levels}</dt><dd>3</dd></div>
+        </dl>
+        <div class="chero__ctas" data-hero-in>
+          <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+          <a class="btn btn--ghost btn--wa" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener"><Icon name="whatsapp" class="wa" /> {d.cta.whatsapp}</a>
+        </div>
+      </div>
+      <div class="chero__visual">
+        {cover ? (
+          <>
+            <div class="chero__glow" aria-hidden="true"></div>
+            <img class="chero__main" data-hero-product src={img(c.id, cover.slug, 1, 1400)} srcset={srcset(c.id, cover.slug, 1)} sizes="(min-width: 1024px) 45vw, 90vw" alt={`${cover.name} ${cover.type[lang]}`} width="1400" height="1400" fetchpriority="high" />
+            {coverAlt && <img class="chero__float" data-parallax="0.25" src={img(c.id, coverAlt.slug, 1, 700)} alt="" aria-hidden="true" width="700" height="700" />}
+          </>
+        ) : (
+          <div class="chero__type" data-hero-product aria-hidden="true">
+            <span>Shorts</span><span>Rash guards</span><span>Hand wraps</span><span>Bags</span><span>Apparel</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <PhotoStrip photos={allPhotos} />
+
+  <nav class="tiernav" aria-label="Levels">
+    <div class="container tiernav__inner">
+      {c.tiers.map((tier, i) => (
+        <a href={tier.models.length ? `#${tier.id}` : '#next-levels'}><span>0{i + 1}</span>{TIERS[tier.id].name}</a>
+      ))}
+      {collections.map((col) => <a href={`#${col.id}`}><span>+</span>{col.name[lang]}</a>)}
+    </div>
+  </nav>
+
+  {fullTiers.map((tier) => {
+    const i = c.tiers.indexOf(tier);
+    return (
+      <section class:list={['tier section', `tier--${tier.id}`]} id={tier.id}>
+        <div class="container">
+          <header class="tier__head">
+            <span class="tier__n" aria-hidden="true">0{i + 1}</span>
+            <div class="tier__titles">
+              <span class="eyebrow">{TIERS[tier.id].tagline[lang]}</span>
+              <h2 class="display-l" data-split>{TIERS[tier.id].name}</h2>
+            </div>
+            <p class="lead" data-reveal>{TIERS[tier.id].body[lang]}</p>
+          </header>
+          <ModelGroups models={tier.models} category={c.id} categoryName={c.name[lang]} label={TIERS[tier.id].name} lang={lang} />
+        </div>
+      </section>
+    );
+  })}
+
+  {collections.map((col) => (
+    <section class="tier section tier--collection" id={col.id}>
+      <div class="container">
+        <header class="tier__head">
+          <span class="tier__n tier__n--col" aria-hidden="true">{col.name.en.split(' ')[0]}</span>
+          <div class="tier__titles">
+            <span class="eyebrow">{c.name[lang]}</span>
+            <h2 class="display-l" data-split>{col.name[lang]}</h2>
+          </div>
+          <p class="lead" data-reveal>{col.intro[lang]}</p>
+        </header>
+        <ModelGroups models={col.models} category={c.id} categoryName={c.name[lang]} label={col.name[lang]} lang={lang} />
+      </div>
+    </section>
+  ))}
+
+  {models.length > 0 && <Customise lang={lang} closeups={closeups} />}
+
+  {plannedTiers.length > 0 && (
+    <section class="section next" id="next-levels">
+      <div class="container">
+        <div class="section-head section-head--split">
+          <div class="next__title">
+            <span class="eyebrow">ISPO 2026 · Stand 2E30</span>
+            <h2 class="display-l" data-split>{fullTiers.length ? d.products.comingTitle : d.products.planned}</h2>
+          </div>
+          <p class="lead" data-reveal>{d.products.comingBody}</p>
+        </div>
+        <div class="next__grid" data-reveal-stagger>
+          {plannedTiers.map((tier) => {
+            const tease = models[(c.tiers.indexOf(tier) * 2) % Math.max(1, models.length)];
+            return (
+              <article class:list={['soon', `soon--${tier.id}`]} id={tier.models.length ? undefined : tier.id}>
+                <div class="soon__img stage">
+                  {tease && <img src={img(c.id, tease.slug, 2 % tease.images + 1, 700)} alt="" loading="lazy" width="700" height="700" />}
+                  <span class="soon__lock">{d.products.planned}</span>
+                </div>
+                <div class="soon__body">
+                  <span class="soon__tier">{TIERS[tier.id].name}</span>
+                  <p class="soon__tag">{TIERS[tier.id].tagline[lang]}</p>
+                  <p class="muted">{tier.planned![lang]}</p>
+                  <a class="link-arrow" href={BOOKING_URL} target="_blank" rel="noopener">{d.products.seeAtIspo} <Icon name="arrow" /></a>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <a class="nextcat" href={localePath(lang, `/products/${next.id}`)}>
+    <div class="container nextcat__inner">
+      <span class="eyebrow">{d.products.next}</span>
+      <span class="nextcat__name">{next.name[lang]} <Icon name="arrow" /></span>
+    </div>
+  </a>
+
+  <FinalCta lang={lang} />
+
+  <!-- Fullscreen viewer, filled by ui.ts -->
+  <div class="lb" data-lightbox hidden role="dialog" aria-modal="true" aria-label={d.products.enlarge}>
+    <button class="lb__btn lb__close" type="button" data-lb-close aria-label={d.products.close}><Icon name="close" /></button>
+    <button class="lb__btn lb__prev" type="button" data-lb-prev aria-label={d.products.prev}><Icon name="arrow" /></button>
+    <figure class="lb__fig"><img data-lb-img alt="" /></figure>
+    <button class="lb__btn lb__next" type="button" data-lb-next aria-label={d.products.nextImg}><Icon name="arrow" /></button>
+    <span class="lb__count" data-lb-count></span>
+  </div>
+</Base>
+
+
+
+<style>
+  .chero { position: relative; overflow: hidden; isolation: isolate; border-bottom: 1px solid var(--line); }
+  .chero__word {
+    position: absolute; left: -1vw; bottom: -0.14em; z-index: -1;
+    font-family: var(--font-display); font-weight: 800; text-transform: uppercase;
+    font-size: clamp(7rem, 24vw, 24rem); line-height: 0.8; white-space: nowrap;
+    color: transparent; -webkit-text-stroke: 1.5px var(--line-strong); pointer-events: none;
+  }
+  .chero__grid { display: grid; gap: 32px; align-items: center; padding-block: clamp(40px, 6vw, 72px); min-height: min(820px, calc(100svh - var(--banner-h) - var(--header-h))); }
+  .chero__copy { display: grid; gap: 22px; justify-items: start; position: relative; z-index: 2; min-width: 0; }
+  .chero__title { max-width: 100%; }
+  .chero__title.display-l { font-size: clamp(2.4rem, 5.2vw, 5rem); }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; color: var(--ink-3); }
+  .crumbs a:hover { color: var(--accent); }
+  .chero__stats { margin: 0; display: grid; grid-template-columns: repeat(3, auto); border-block: 1px solid var(--line); }
+  .chero__stats div { padding: 14px 28px 14px 0; display: grid; gap: 2px; }
+  .chero__stats div + div { padding-left: 28px; border-left: 1px solid var(--line); }
+  .chero__stats dt { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); order: 2; }
+  .chero__stats dd { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 2.6rem; line-height: 1; color: var(--accent); }
+  .chero__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .chero__visual { position: relative; display: grid; place-items: center; min-height: 320px; }
+  .chero__glow { position: absolute; inset: 8%; background: radial-gradient(circle, var(--accent-soft) 0%, transparent 65%); filter: blur(20px); transform: scale(1.3); }
+  :global([data-theme-current='dark']) .chero__glow { background: radial-gradient(circle, rgba(163, 176, 108, 0.26) 0%, transparent 62%); }
+  .chero__main { position: relative; width: min(100%, 600px); height: auto; filter: drop-shadow(0 50px 60px rgba(0, 0, 0, 0.35)); }
+  .chero__float { position: absolute; width: 34%; right: -2%; bottom: 2%; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.35)); rotate: 8deg; }
+  .chero__type { display: grid; font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(2.6rem, 6vw, 5.5rem); line-height: 0.92; }
+  .chero__type span { color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .chero__type span:nth-child(odd) { padding-left: 1em; }
+  @media (min-width: 1024px) { .chero__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 1023px) { .chero__visual { order: -1; max-width: 460px; width: 100%; margin-inline: auto; } }
+  @media (max-width: 520px) { .chero__ctas .btn { width: 100%; } .chero__stats div { padding-right: 16px; } .chero__stats div + div { padding-left: 16px; } }
+
+  .tiernav { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .tiernav__inner { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .tiernav a {
+    display: inline-flex; align-items: baseline; gap: 8px; padding: 18px 20px 16px;
+    font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.05rem; color: var(--ink-2);
+    border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.25s, border-color 0.25s;
+  }
+  .tiernav a span { font-size: 0.75rem; color: var(--accent); }
+  .tiernav a:hover { color: var(--ink); border-color: var(--accent); }
+
+  .tier { scroll-margin-top: 60px; }
+  .tier__head { display: grid; gap: 20px; margin-bottom: clamp(36px, 5vw, 64px); align-items: end; }
+  .tier__n { font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 10vw, 9rem); line-height: 0.75; color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .tier__titles { display: grid; gap: 12px; }
+  @media (min-width: 1024px) { .tier__head { grid-template-columns: auto 1fr 1fr; gap: 40px; } }
+  .tier + .tier { border-top: 1px solid var(--line); }
+  .tier--collection { background: var(--bg-2); }
+  .tier__n--col { font-size: clamp(4rem, 8vw, 7rem); }
+
+  .next { scroll-margin-top: 60px; }
+  .next__title { display: grid; gap: 16px; }
+  .next__grid { display: grid; gap: 20px; }
+  @media (min-width: 800px) { .next__grid { grid-template-columns: repeat(2, 1fr); } }
+  .soon { display: grid; grid-template-columns: 1fr; background: var(--panel-bg); color: var(--panel-ink); border: 1px solid var(--line); overflow: hidden; scroll-margin-top: 80px; }
+  .soon__img { aspect-ratio: 16 / 9; }
+  .soon__img img { padding: 10%; filter: blur(14px) brightness(0.6) drop-shadow(0 20px 30px rgba(0, 0, 0, 0.4)); transform: scale(1.05); transition: filter 0.8s var(--ease); }
+  .soon:hover .soon__img img { filter: blur(8px) brightness(0.7); }
+  .soon__lock { position: absolute; inset: auto 16px 16px 16px; z-index: 2; text-align: center; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.85rem; padding: 10px; background: color-mix(in srgb, var(--bg) 85%, transparent); color: var(--ink); }
+  .soon__body { display: grid; gap: 14px; align-content: center; padding: clamp(24px, 3vw, 40px); }
+  .soon__tier { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(2.6rem, 4.5vw, 4rem); line-height: 0.9; }
+  .soon__tag { font-weight: 600; color: var(--accent); }
+  .soon--elite .soon__tier { color: var(--sand); }
+  .soon--elite { border-color: color-mix(in srgb, var(--sand) 45%, transparent); }
+
+  .nextcat { display: block; border-top: 1px solid var(--line); transition: background-color 0.4s var(--ease); }
+  .nextcat:hover { background: var(--accent-soft); }
+  .nextcat__inner { display: grid; gap: 12px; padding-block: clamp(48px, 7vw, 96px); }
+  .nextcat__name { display: inline-flex; align-items: center; gap: 24px; font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(2.6rem, 7vw, 6.5rem); line-height: 0.9; }
+  .nextcat__name :global(svg) { width: 0.7em; height: 0.7em; color: var(--accent); transition: transform 0.5s var(--ease); flex: none; }
+  .nextcat:hover .nextcat__name :global(svg) { transform: translateX(16px); }
+
+  .lb { position: fixed; inset: 0; z-index: 100; background: rgba(8, 9, 6, 0.94); display: grid; place-items: center; }
+  .lb[hidden] { display: none; }
+  .lb__fig { margin: 0; width: min(88vw, 88vh); aspect-ratio: 1; background: radial-gradient(circle at 50% 46%, #3a3f2c 0%, #15170f 70%); }
+  .lb__fig img { width: 100%; height: 100%; object-fit: contain; padding: 6%; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.5)); }
+  .lb__btn { position: absolute; width: 52px; height: 52px; display: grid; place-items: center; color: #efece2; border: 1px solid rgba(239, 236, 226, 0.25); transition: background-color 0.2s; }
+  .lb__btn:hover { background: #4b5320; border-color: #4b5320; }
+  .lb__btn :global(svg) { width: 22px; height: 22px; }
+  .lb__close { top: 20px; right: 20px; }
+  .lb__prev { left: 20px; top: 50%; translate: 0 -50%; }
+  .lb__prev :global(svg) { rotate: 180deg; }
+  .lb__next { right: 20px; top: 50%; translate: 0 -50%; }
+  .lb__count { position: absolute; bottom: 24px; left: 50%; translate: -50% 0; color: rgba(239, 236, 226, 0.7); font-family: var(--font-display); letter-spacing: 0.16em; }
+  @media (max-width: 600px) { .lb__prev, .lb__next { top: auto; bottom: 16px; translate: none; } .lb__count { bottom: 32px; } }
+</style>

@@ -1,0 +1,84 @@
+---
+import Icon from '../Icon.astro';
+import PeopleCards from '../PeopleCards.astro';
+import { whatsappUrl } from '../../data/site';
+import { localePath, t, type Lang } from '../../i18n';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+---
+<section class="fa section" id="factory">
+  <div class="container">
+    <div class="fa__factory">
+      <div class="fa__copy">
+        <span class="eyebrow">{d.factory.eyebrow}</span>
+        <h2 class="display-l" data-split>{d.factory.title[0]}<br /><span class="accent">{d.factory.title[1]}</span></h2>
+        <p class="lead" data-reveal>{d.factory.body}</p>
+        <div data-reveal>
+          <a class="btn btn--primary" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener">{d.factory.cta} <Icon name="arrow" /></a>
+        </div>
+      </div>
+      <div class="fa__media stage grain" data-clip>
+        <!-- Factory video goes here: <video autoplay muted loop playsinline src="/video/factory.mp4"> -->
+        <div class="fa__placeholder">
+          <span class="fa__play"><Icon name="play" /></span>
+          <span>{d.factory.video}</span>
+        </div>
+      </div>
+    </div>
+
+    <ol class="fa__steps" data-reveal-stagger>
+      {d.factory.steps.map((s, i) => (
+        <li><span>{String(i + 1).padStart(2, '0')}</span>{s}</li>
+      ))}
+    </ol>
+
+    <div class="fa__statement" aria-hidden="true">
+      <span data-parallax="0.12">{d.about.lead}</span>
+    </div>
+
+    <div class="fa__about">
+      <div class="fa__about-copy">
+        <span class="eyebrow">{d.about.eyebrow}</span>
+        <h2 class="display-m" data-split>{d.about.title}</h2>
+        <p class="lead" data-reveal>{d.about.body}</p>
+        <a class="link-arrow" href={localePath(lang, '/about')} data-reveal>{d.about.more} <Icon name="arrow" /></a>
+      </div>
+      <PeopleCards lang={lang} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .fa__factory { display: grid; gap: 40px; align-items: center; }
+  .fa__copy { display: grid; gap: 24px; justify-items: start; }
+  .fa__media { aspect-ratio: 16 / 10; display: grid; place-items: center; }
+  .fa__placeholder { position: relative; z-index: 2; display: grid; justify-items: center; gap: 16px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); }
+  .fa__play { width: 84px; height: 84px; border-radius: 50%; background: var(--accent-fill); color: var(--on-accent); display: grid; place-items: center; box-shadow: 0 0 0 12px var(--accent-soft); }
+  .fa__play :global(svg) { width: 30px; height: 30px; margin-left: 4px; }
+  .fa__steps { list-style: none; padding: 0; margin: clamp(40px, 5vw, 64px) 0 0; display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .fa__steps li {
+    display: flex; align-items: baseline; gap: 12px; padding: 20px;
+    border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: clamp(1.1rem, 1.6vw, 1.4rem); letter-spacing: 0.04em;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .fa__steps li:hover { background: var(--accent-fill); color: var(--on-accent); }
+  .fa__steps li span { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.1em; }
+  .fa__steps li:hover span { color: inherit; }
+  .fa__statement {
+    margin-block: clamp(72px, 10vw, 140px);
+    font-family: var(--font-display); font-weight: 800; text-transform: uppercase;
+    font-size: clamp(2.6rem, 8vw, 7.5rem); line-height: 0.9; text-align: center;
+    color: transparent; -webkit-text-stroke: 1.5px var(--accent);
+  }
+  .fa__statement span { display: block; }
+  .fa__about { display: grid; gap: 48px; }
+  .fa__about-copy { display: grid; gap: 20px; align-content: start; }
+  @media (min-width: 1024px) {
+    .fa__factory { grid-template-columns: 1fr 1.15fr; gap: 72px; }
+    .fa__steps { grid-template-columns: repeat(4, 1fr); }
+    .fa__about { grid-template-columns: 1fr 1.4fr; gap: 72px; }
+    .fa__about-copy { position: sticky; top: 120px; }
+  }
+</style>

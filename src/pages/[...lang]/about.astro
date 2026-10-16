@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import PeopleCards from '../../components/PeopleCards.astro';
+import FinalCta from '../../components/sections/FinalCta.astro';
+import { langFromParam, langPaths, localePath, t } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+const s = d.about.story;
+---
+<Base lang={lang} path="/about" title={d.pages.about.title} description={d.about.body}>
+  <PageHero eyebrow={d.about.eyebrow} title={d.about.title} body={d.about.body} word="Tribe" crumbs={[{ label: 'Home', href: localePath(lang, '/') }]} />
+
+  <section class="section">
+    <div class="container story">
+      <div class="story__aside">
+        <h2 class="display-m" data-split>{s.title}</h2>
+        <ul class="values" data-reveal-stagger>
+          {s.values.map((v) => <li>{v}</li>)}
+        </ul>
+      </div>
+      <div class="story__body">
+        {s.paragraphs.map((p, i) => <p class:list={{ first: i === 0 }} data-reveal>{p}</p>)}
+        <blockquote data-reveal>
+          {s.closing.map((line) => <span>{line}</span>)}
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section class="section team">
+    <div class="container team__grid">
+      <div class="team__copy">
+        <span class="eyebrow">{d.about.lead}</span>
+        <h2 class="display-l" data-split>Bart &amp; Jan</h2>
+      </div>
+      <PeopleCards lang={lang} />
+    </div>
+  </section>
+  <FinalCta lang={lang} />
+</Base>
+
+<style>
+  .story { display: grid; gap: 48px; }
+  .story__aside { display: grid; gap: 32px; align-content: start; }
+  @media (min-width: 1024px) { .story { grid-template-columns: 1fr 1.3fr; gap: 96px; } .story__aside { position: sticky; top: 120px; align-self: start; } }
+  .values { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .values li { padding: 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 1.25rem; }
+  .values li::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--accent); margin-right: 12px; vertical-align: middle; }
+  .story__body { display: grid; gap: 24px; font-size: 1.12rem; color: var(--ink-2); }
+  .story__body .first { font-size: clamp(1.35rem, 2vw, 1.7rem); line-height: 1.4; color: var(--ink); }
+  blockquote { margin: 24px 0 0; padding: 8px 0 8px 28px; border-left: 3px solid var(--accent); display: grid; gap: 6px; }
+  blockquote span { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1; color: var(--ink); }
+  blockquote span:last-child { color: var(--accent); }
+  .team { border-top: 1px solid var(--line); background: var(--bg-2); }
+  .team__grid { display: grid; gap: 48px; }
+  .team__copy { display: grid; gap: 16px; align-content: start; }
+  @media (min-width: 1024px) { .team__grid { grid-template-columns: 1fr 1.4fr; gap: 72px; } }
+</style>

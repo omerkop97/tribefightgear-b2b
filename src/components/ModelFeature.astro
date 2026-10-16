@@ -1,0 +1,107 @@
+---
+import Icon from './Icon.astro';
+import { img, srcset, type CategoryId, type Model } from '../data/products';
+import { whatsappUrl } from '../data/site';
+import { t, type Lang } from '../i18n';
+
+/** `label` is the level (Essential…) or the collection name (MMA Gloves). */
+interface Props { model: Model; category: CategoryId; categoryName: string; label: string; index: number; lang: Lang; }
+const { model: m, category, categoryName, label, index, lang } = Astro.props;
+const d = t(lang);
+const angles = Array.from({ length: m.images }, (_, k) => k + 1);
+const ask = whatsappUrl(lang === 'nl'
+  ? `Hoi Tribe Gear, ik heb interesse in het ${m.name} model (${m.type.nl}, ${categoryName}) voor mijn merk.`
+  : `Hi Tribe Gear, I'm interested in the ${m.name} model (${m.type.en}, ${categoryName}) for my brand.`);
+const group = `${category}-${m.slug}`;
+---
+<article class:list={['mf', { 'mf--flip': index % 2 === 1 }]} data-gallery data-lightbox-group={group}>
+  <div class="mf__media">
+    <button class="mf__stage stage grain" type="button" data-lightbox-open aria-label={`${d.products.enlarge}: ${m.name}`} data-clip>
+      <img
+        data-gallery-main
+        src={img(category, m.slug, 1, 1400)}
+        srcset={srcset(category, m.slug, 1)}
+        sizes="(min-width: 1024px) 50vw, 92vw"
+        alt={`${m.name} ${m.type[lang]}`}
+        width="1400" height="1400" loading="lazy"
+      />
+      <span class="mf__badge">{label}</span>
+      <span class="mf__zoom"><Icon name="plus" /></span>
+    </button>
+    {m.images > 1 && (
+      <div class="mf__thumbs" role="group" aria-label={`${m.images} ${d.products.angleCount}`} data-reveal-stagger>
+        {angles.map((n) => (
+          <button
+            type="button"
+            data-gallery-thumb
+            data-lightbox-item={img(category, m.slug, n, 1400)}
+            data-src={img(category, m.slug, n, 1400)}
+            data-srcset={srcset(category, m.slug, n)}
+            aria-pressed={n === 1 ? 'true' : 'false'}
+            aria-label={`${d.products.view} ${n}`}
+          >
+            <img src={img(category, m.slug, n, 700)} alt="" width="700" height="700" loading="lazy" />
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <div class="mf__info">
+    <span class="mf__index">{String(index + 1).padStart(2, '0')}</span>
+    <span class="eyebrow">{m.type[lang]}</span>
+    <h3 class="mf__name" data-split>{m.name}</h3>
+    <dl class="mf__specs" data-reveal>
+      <div><dt>{d.products.material}</dt><dd>{m.material[lang]}</dd></div>
+      <div><dt>{d.products.angleCount}</dt><dd>{m.images}</dd></div>
+      <div><dt>{lang === 'nl' ? 'Lijn' : 'Line'}</dt><dd>{label}</dd></div>
+    </dl>
+    <div class="mf__opts" data-reveal>
+      <span class="mf__opts-label">{d.products.options}</span>
+      <ul>{d.products.optionList.map((o) => <li><Icon name="check" />{o}</li>)}</ul>
+    </div>
+    <div class="mf__ctas" data-reveal>
+      <a class="btn btn--primary" href={ask} target="_blank" rel="noopener"><Icon name="whatsapp" /> {d.cta.develop}</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .mf { display: grid; gap: clamp(28px, 4vw, 64px); align-items: center; padding-block: clamp(40px, 6vw, 80px); border-top: 1px solid var(--line); }
+  .mf:first-child { border-top: 0; padding-top: 0; }
+  @media (min-width: 1024px) {
+    .mf { grid-template-columns: 1.25fr 1fr; }
+    .mf--flip .mf__media { order: 2; }
+  }
+  .mf__media { display: grid; gap: 10px; }
+  .mf__stage { display: block; width: 100%; aspect-ratio: 1 / 0.92; cursor: zoom-in; padding: 0; border: 1px solid var(--line); }
+  .mf__stage img { padding: 7%; transition: transform 0.9s var(--ease); }
+  .mf__stage:hover img { transform: scale(1.04); }
+  .mf__badge { position: absolute; top: 16px; left: 16px; z-index: 2; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 5px 10px; background: var(--bg); border: 1px solid var(--line); }
+  .mf__zoom { position: absolute; right: 16px; bottom: 16px; z-index: 2; width: 44px; height: 44px; display: grid; place-items: center; background: var(--accent-fill); color: var(--on-accent); transition: transform 0.4s var(--ease); }
+  .mf__zoom :global(svg) { width: 20px; height: 20px; }
+  .mf__stage:hover .mf__zoom { transform: rotate(90deg); }
+  .mf__thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .mf__thumbs button { aspect-ratio: 1; background: var(--stage); border: 1px solid var(--line); opacity: 0.7; transition: opacity 0.25s, border-color 0.25s, transform 0.4s var(--ease); }
+  .mf__thumbs button:hover { opacity: 1; transform: translateY(-3px); }
+  .mf__thumbs button[aria-pressed='true'] { opacity: 1; border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .mf__thumbs img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
+
+  .mf__info { display: grid; gap: 20px; align-content: center; position: relative; }
+  .mf__index { position: absolute; right: 0; top: -0.2em; font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 9vw, 8rem); line-height: 0.8; color: transparent; -webkit-text-stroke: 1.5px var(--line-strong); pointer-events: none; }
+  .mf__name { font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 800; }
+  .mf__specs { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
+  .mf__specs div { padding: 16px 0; display: grid; gap: 4px; }
+  .mf__specs div + div { padding-left: 16px; border-left: 1px solid var(--line); }
+  .mf__specs dt { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .mf__specs dd { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; text-transform: uppercase; }
+  .mf__opts { display: grid; gap: 12px; }
+  .mf__opts-label { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .mf__opts ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .mf__opts li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid var(--line); font-size: 0.88rem; background: var(--surface); }
+  .mf__opts li :global(svg) { width: 14px; height: 14px; color: var(--accent); }
+  @media (max-width: 520px) {
+    .mf__thumbs { grid-template-columns: repeat(3, 1fr); }
+    .mf__ctas .btn { width: 100%; }
+  }
+</style>

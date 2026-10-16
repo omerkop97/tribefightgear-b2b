@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import { img, srcset, TIERS, type Category } from '../data/products';
+import { localePath, t, type Lang } from '../i18n';
+
+interface Props { category: Category; index: number; lang: Lang; }
+const { category: c, index, lang } = Astro.props;
+const d = t(lang);
+const cover = c.cover ? c.tiers.flatMap((tier) => tier.models).find((m) => m.slug === c.cover) : undefined;
+const frames = cover ? Array.from({ length: cover.images }, (_, i) => img(c.id, cover.slug, i + 1, 700)).join('|') : '';
+---
+<a href={localePath(lang, `/products/${c.id}`)} class="ccard">
+  <div class="ccard__stage stage grain" data-spin={frames}>
+    {cover ? (
+      <img src={img(c.id, cover.slug, 1, 700)} srcset={srcset(c.id, cover.slug, 1)} sizes="(min-width: 1024px) 34vw, 80vw" alt={c.name[lang]} width="700" height="700" loading="lazy" />
+    ) : (
+      <div class="ccard__type" aria-hidden="true">
+        <span>Shorts</span><span>Rash guards</span><span>Hand wraps</span><span>Bags</span><span>Apparel</span>
+      </div>
+    )}
+    <span class="ccard__num">0{index + 1}</span>
+  </div>
+  <div class="ccard__body">
+    <h3 class="display-s">{c.name[lang]}</h3>
+    <p class="muted">{c.short[lang]}</p>
+    <div class="ccard__tiers">
+      {c.tiers.map((tier) => <span>{TIERS[tier.id].name}</span>)}
+    </div>
+    <span class="link-arrow">{d.cta.explore} <Icon name="arrow" /></span>
+  </div>
+</a>
+
+<style>
+  .ccard { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); height: 100%; transition: border-color 0.4s var(--ease), transform 0.5s var(--ease); }
+  .ccard:hover { border-color: var(--accent); }
+  .ccard__stage { aspect-ratio: 1 / 0.86; cursor: ew-resize; }
+  .ccard__stage img { padding: 8%; transition: transform 0.8s var(--ease); }
+  .ccard:hover .ccard__stage img { transform: scale(1.05); }
+  .ccard__num { position: absolute; left: 20px; top: 16px; z-index: 2; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--accent); letter-spacing: 0.1em; }
+  .ccard__type {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 28px;
+    font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(2rem, 3.4vw, 3rem); line-height: 0.95;
+  }
+  .ccard__type span { color: transparent; -webkit-text-stroke: 1px var(--line-strong); transition: color 0.4s, -webkit-text-stroke-color 0.4s; }
+  .ccard__type span:nth-child(odd) { padding-left: 1.2em; }
+  .ccard:hover .ccard__type span { -webkit-text-stroke-color: var(--accent); }
+  .ccard__body { display: grid; gap: 14px; padding: 24px; flex: 1; align-content: start; }
+  .ccard__body .muted { font-size: 0.95rem; }
+  .ccard__tiers { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ccard__tiers span { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; border: 1px solid var(--line); color: var(--ink-2); }
+  .ccard .link-arrow { margin-top: auto; padding-top: 8px; }
+</style>

@@ -1,0 +1,73 @@
+---
+import { BOOKING_URL, ISPO } from '../data/site';
+import { t, type Lang } from '../i18n';
+import Icon from './Icon.astro';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+const expired = Date.now() > Date.parse(ISPO.endsAt);
+---
+{!expired && (
+  <div class="banner" data-banner data-ends={ISPO.endsAt}>
+    <div class="banner__track">
+      <p class="banner__text">
+        <span class="banner__dot" aria-hidden="true"></span>
+        <span class="long">{d.banner.text}</span>
+        <span class="short">ISPO 2026 · RAI · Stand {ISPO.stand}</span>
+      </p>
+      <a class="banner__cta" href={BOOKING_URL} target="_blank" rel="noopener">
+        {d.banner.cta}
+        <Icon name="arrow" />
+      </a>
+    </div>
+  </div>
+)}
+
+<style>
+  .banner {
+    position: relative;
+    z-index: 60;
+    height: var(--banner-h);
+    background: var(--accent-fill);
+    color: var(--on-accent);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    overflow: hidden;
+  }
+  .banner__track {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding-inline: 16px;
+  }
+  .banner__text { display: flex; align-items: center; gap: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .banner__dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; animation: pulse 1.8s infinite; }
+  .banner__cta {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: var(--on-accent);
+    color: var(--accent-fill);
+    font-weight: 700;
+    transition: transform 0.3s var(--ease);
+  }
+  .banner__cta :global(svg) { width: 15px; height: 15px; }
+  .banner__cta:hover { transform: translateX(3px); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+  .short { display: none; }
+  @media (max-width: 1000px) {
+    .long { display: none; }
+    .short { display: inline; }
+  }
+  @media (max-width: 760px) {
+    .banner { font-size: 0.78rem; }
+    .banner__track { justify-content: space-between; gap: 12px; }
+  }
+</style>

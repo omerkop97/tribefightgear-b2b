@@ -1,0 +1,59 @@
+---
+import Icon from '../Icon.astro';
+import { BOOKING_URL, ISPO, whatsappUrl } from '../../data/site';
+import { img } from '../../data/products';
+import { t, type Lang } from '../../i18n';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+---
+<section class="final" data-wipe>
+  <img class="final__img" src={img('gloves', 'mandala', 1, 700)} alt="" aria-hidden="true" loading="lazy" data-parallax="0.18" width="700" height="700" />
+  <div class="container final__inner">
+    <span class="eyebrow">{d.final.eyebrow}</span>
+    <h2 class="final__title" data-split>{d.final.title[0]}<br />{d.final.title[1]}</h2>
+    <p class="final__body" data-reveal>{d.final.body}</p>
+    <div class="final__ctas" data-reveal>
+      <a class="btn btn--cream" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+      <a class="btn btn--line" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener"><Icon name="whatsapp" /> {d.cta.whatsapp}</a>
+    </div>
+    <p class="final__meta" data-reveal>ISPO 2026 · {ISPO.venue} · {ISPO.dates[lang]} · Stand {ISPO.stand}</p>
+  </div>
+</section>
+
+<style>
+  .final {
+    position: relative;
+    background: #4b5320;
+    color: #f3efe4;
+    overflow: hidden;
+    isolation: isolate;
+    padding-block: clamp(96px, 14vw, 200px);
+  }
+  .final::before {
+    content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0.35;
+    background: radial-gradient(ellipse at 80% 20%, #6b7533 0%, transparent 55%), radial-gradient(ellipse at 10% 100%, #2a2f12 0%, transparent 60%);
+  }
+  .final__img {
+    position: absolute; right: -6%; bottom: -10%; width: min(52vw, 640px); z-index: -1; opacity: 0.9;
+    filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.45));
+    rotate: -12deg;
+  }
+  .final__inner { display: grid; gap: 28px; justify-items: start; }
+  .final .eyebrow { color: #d6dcae; }
+  .final__title {
+    font-size: clamp(4rem, 13vw, 12rem); font-weight: 800; line-height: 0.85;
+  }
+  .final__body { max-width: 44ch; font-size: clamp(1.05rem, 1.4vw, 1.25rem); color: rgba(243, 239, 228, 0.82); }
+  .final__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn--cream { background: #f3efe4; color: #2a2f12; }
+  .btn--cream::after { background: #ffffff; }
+  .btn--line { border: 1.5px solid rgba(243, 239, 228, 0.45); color: #f3efe4; }
+  .btn--line::after { background: #f3efe4; }
+  .btn--line:hover { color: #2a2f12; }
+  .final__meta { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.9rem; color: rgba(243, 239, 228, 0.65); }
+  @media (max-width: 760px) {
+    .final__img { width: 80vw; right: -30%; bottom: -6%; opacity: 0.35; }
+    .final__ctas .btn { width: 100%; }
+  }
+</style>

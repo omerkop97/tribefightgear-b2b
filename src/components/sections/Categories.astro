@@ -1,0 +1,62 @@
+---
+import Icon from '../Icon.astro';
+import CategoryCard from '../CategoryCard.astro';
+import { CATEGORIES } from '../../data/products';
+import { localePath, t, type Lang } from '../../i18n';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+---
+<section class="cats" data-hscroll id="products">
+  <div class="container cats__head">
+    <div class="cats__title">
+      <span class="eyebrow">{d.categories.eyebrow}</span>
+      <h2 class="display-l" data-split>{d.categories.title}</h2>
+    </div>
+    <div class="cats__intro" data-reveal>
+      <p class="lead">{d.categories.body}</p>
+      <p class="cats__note"><span></span>{d.categories.tiersNote}: Essential · Performance · Elite</p>
+    </div>
+  </div>
+  <div class="cats__rail">
+    <div class="cats__track container" data-hscroll-track>
+      {CATEGORIES.map((c, i) => (
+        <div class="cats__item"><CategoryCard category={c} index={i} lang={lang} /></div>
+      ))}
+      <a class="cats__item cats__all" href={localePath(lang, '/products')}>
+        <span class="display-m">{d.cta.viewAll}</span>
+        <span class="cats__all-icon"><Icon name="arrow" /></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cats { padding-block: clamp(80px, 10vw, 120px) clamp(56px, 6vw, 80px); overflow: hidden; }
+  .cats__head { display: grid; gap: 24px; margin-bottom: clamp(32px, 4vw, 56px); }
+  .cats__title { display: grid; gap: 16px; }
+  .cats__intro { display: grid; gap: 16px; align-content: end; }
+  .cats__note { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; color: var(--ink-2); letter-spacing: 0.04em; }
+  .cats__note span { width: 8px; height: 8px; background: var(--accent); }
+  .cats__track { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 8px; }
+  .cats__track::-webkit-scrollbar { display: none; }
+  .cats__item { flex: 0 0 min(82vw, 380px); scroll-snap-align: start; }
+  .cats__all {
+    display: flex; flex-direction: column; justify-content: space-between; padding: 28px;
+    background: var(--accent-fill); color: var(--on-accent); min-height: 320px;
+    transition: background-color 0.4s var(--ease);
+  }
+  .cats__all:hover { background: var(--accent-hover); }
+  .cats__all-icon { width: 64px; height: 64px; border: 1.5px solid currentColor; display: grid; place-items: center; align-self: flex-end; transition: transform 0.5s var(--ease); }
+  .cats__all:hover .cats__all-icon { transform: translateX(6px); }
+  .cats__all-icon :global(svg) { width: 26px; height: 26px; }
+
+  @media (min-width: 1024px) {
+    .cats { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-block: 40px 56px; }
+    .cats__head { grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: end; }
+    .cats__track { overflow: visible; scroll-snap-type: none; max-width: none; padding-right: 10vw; padding-left: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter))); }
+    .cats__item { flex-basis: clamp(300px, 25vw, 380px); }
+    .cats__item :global(.ccard__stage) { aspect-ratio: 1 / 0.78; }
+    .cats__all { flex-basis: clamp(240px, 20vw, 300px); }
+  }
+</style>

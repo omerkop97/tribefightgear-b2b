@@ -1,0 +1,63 @@
+---
+import { t, type Lang } from '../../i18n';
+
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang);
+const ticker = ['OEM Manufacturing', 'ODM Development', 'Private Label', 'Leather', 'Microfibre', 'Premium PU', 'European support', 'Quality control'];
+---
+<section class="trust" aria-label="Trust">
+  <div class="container trust__grid" data-reveal-stagger>
+    {d.trust.map((item) => (
+      <div class="trust__item">
+        <div class="trust__value">
+          {item.count !== undefined ? (
+            <><span data-count={item.count}>{item.count}</span><span class="accent">{item.suffix}</span></>
+          ) : (
+            <span class="trust__eu">
+              <svg viewBox="0 0 40 40" aria-hidden="true">
+                {Array.from({ length: 12 }, (_, i) => {
+                  const a = (i / 12) * Math.PI * 2;
+                  return <circle cx={20 + Math.cos(a) * 14} cy={20 + Math.sin(a) * 14} r="1.9" fill="currentColor" />;
+                })}
+              </svg>
+              {item.text}
+            </span>
+          )}
+        </div>
+        <p class="trust__label">{item.label}</p>
+      </div>
+    ))}
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__row">
+      {[...ticker, ...ticker].map((w) => <span>{w}<i>✕</i></span>)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .trust { border-block: 1px solid var(--line); }
+  .trust__grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .trust__item { padding: clamp(28px, 4vw, 48px) clamp(12px, 2vw, 32px); border-left: 1px solid var(--line); display: grid; gap: 8px; align-content: start; }
+  .trust__item:nth-child(odd) { border-left: 0; padding-left: 0; }
+  .trust__item:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
+  .trust__value { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 6vw, 5.2rem); line-height: 0.9; display: flex; align-items: baseline; }
+  .trust__eu { display: inline-flex; align-items: center; gap: 12px; }
+  .trust__eu svg { width: 0.7em; height: 0.7em; color: var(--accent); }
+  .trust__label { color: var(--ink-2); font-size: 0.95rem; max-width: 22ch; }
+  @media (min-width: 900px) {
+    .trust__grid { grid-template-columns: repeat(4, 1fr); }
+    .trust__item:nth-child(-n + 2) { border-bottom: 0; }
+    .trust__item:nth-child(odd) { border-left: 1px solid var(--line); padding-left: clamp(12px, 2vw, 32px); }
+    .trust__item:first-child { border-left: 0; padding-left: 0; }
+  }
+
+  .ticker { border-top: 1px solid var(--line); overflow: hidden; padding-block: 18px; background: var(--bg-2); }
+  .ticker__row { display: flex; width: max-content; animation: ticker 40s linear infinite; }
+  .ticker span {
+    display: inline-flex; align-items: center; gap: 28px; padding-right: 28px;
+    font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2);
+  }
+  .ticker i { font-style: normal; color: var(--accent); font-size: 0.8rem; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
+</style>

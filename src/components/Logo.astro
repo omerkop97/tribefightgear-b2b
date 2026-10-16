@@ -1,0 +1,25 @@
+---
+import emblem from '../assets/brand/emblem.svg?raw';
+import wordmark from '../assets/brand/wordmark.svg?raw';
+---
+<span class="logo" aria-label="Tribe Gear B2B" role="img">
+  <span class="logo__emblem" set:html={emblem} />
+  <span class="logo__text">
+    <span class="logo__word" set:html={wordmark} />
+    <span class="logo__sub" aria-hidden="true">B2B · Fight gear factory</span>
+  </span>
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); }
+  .logo__emblem { display: block; width: 50px; flex: none; transition: transform 0.5s var(--ease); }
+  .logo:hover .logo__emblem { transform: translateY(-2px) scale(1.04); }
+  .logo__emblem :global(svg), .logo__word :global(svg) { width: 100%; height: auto; display: block; }
+  .logo__text { display: flex; flex-direction: column; gap: 5px; }
+  .logo__word { display: block; width: 138px; }
+  .logo__sub { font-family: var(--font-display); font-weight: 600; font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); line-height: 1; white-space: nowrap; }
+  @media (max-width: 480px) {
+    .logo__emblem { width: 42px; }
+    .logo__word { width: 118px; }
+  }
+</style>
