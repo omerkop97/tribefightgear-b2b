@@ -26,9 +26,7 @@
 ## 3. Huisstijl & thema
 
 - **Kleuren** (besloten 11 okt): **army green** als accent i.p.v. rood. Army green `#4B5320` (knoppen/vlakken), lichtere olijf `#A3B06C` voor tekstaccenten in dark mode, crème `#F3EFE4`, zwart `#0A0B08`.
-- **Light mode**: crèmewitte achtergrond, donkere tekst, army green accenten.
-- **Dark mode**: zwarte achtergrond, crème tekst, army green accenten.
-- Automatisch via `prefers-color-scheme` **plus** een handmatige toggle in de header (keuze onthouden).
+- **Alleen dark mode** (besloten 16 okt door de klant): zwarte achtergrond, crème tekst, army green accenten. Geen lichte modus en geen wisselknop.
 - **Typografie**: *Barlow Condensed* (koppen, uppercase) + *Inter* (tekst), zelf gehost.
 - **Design-taal**: veel witruimte, harde rechte hoeken, dunne lijnen, grote productfotografie, rode accentlijnen.
 
@@ -136,7 +134,7 @@ Na ISPO: banner uitschakelen/ombouwen, fabrieksvideo toevoegen, Performance/Elit
 
 **Gebouwd** (Astro-project in deze map, `npm run dev` → http://localhost:4321):
 - Alle pagina's in EN + NL: home, products, 4 categoriepagina's, OEM/ODM, factory, about, ISPO 2026, contact, privacy, 404.
-- ISPO-banner (verdwijnt automatisch na 5 nov), header met dropdown, mobiel menu, light/dark automatisch + toggle.
+- ISPO-banner (verdwijnt automatisch na 5 nov), header met dropdown, mobiel menu, altijd dark mode. QR-code alleen op desktop.
 - Scroll-animaties: woord-voor-woord koppen, parallax hero-handschoen, tellers, horizontale categorie-rail (desktop), procesbalk die meegroeit, clip-reveals, CTA-wipe. `prefers-reduced-motion` wordt gerespecteerd.
 - 68 productfoto's omgezet naar WebP (330 MB → 13 MB), galerij met 6 hoeken per model + "spin" door met de muis over categoriekaarten te bewegen.
 - QR-code (WhatsApp, ISPO-bericht) automatisch gegenereerd.

@@ -5,61 +5,8 @@
 @import '@fontsource/barlow-condensed/800.css';
 @import 'lenis/dist/lenis.css';
 
-/* ---------- Tokens ---------- */
+/* ---------- Tokens (dark is the only theme) ---------- */
 :root {
-  color-scheme: light;
-  --bg: #f3efe4;          /* cream */
-  --bg-2: #ebe5d5;
-  --surface: #faf8f2;
-  --stage: radial-gradient(circle at 50% 46%, #ffffff 0%, #ece6d6 70%);
-  --ink: #15170f;
-  --ink-2: #55584a;
-  --ink-3: #8a8c7c;
-  --line: rgba(21, 23, 15, 0.12);
-  --line-strong: rgba(21, 23, 15, 0.24);
-  --accent: #4b5320;      /* army green */
-  --accent-fill: #4b5320;
-  --accent-hover: #3c4319;
-  --on-accent: #f3efe4;
-  --accent-soft: rgba(75, 83, 32, 0.1);
-  --sand: #b9a774;
-  --panel-bg: #faf8f2;
-  --panel-ink: #15170f;
-  --shadow: 0 30px 60px -30px rgba(21, 23, 15, 0.35);
-
-  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
-  --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --container: 1320px;
-  --gutter: clamp(16px, 4vw, 48px);
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --banner-h: 40px;
-  --header-h: 76px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --bg: #0a0b08;
-    --bg-2: #11130d;
-    --surface: #15170f;
-    --stage: radial-gradient(circle at 50% 46%, #3a3f2c 0%, #191b13 62%, #121410 100%);
-    --ink: #eeebe1;
-    --ink-2: #a9aa98;
-    --ink-3: #74766a;
-    --line: rgba(238, 235, 225, 0.1);
-    --line-strong: rgba(238, 235, 225, 0.22);
-    --accent: #a3b06c;
-    --accent-fill: #4b5320;
-    --accent-hover: #5a6328;
-    --on-accent: #f3efe4;
-    --accent-soft: rgba(163, 176, 108, 0.12);
-    --panel-bg: #1a1e12;
-    --panel-ink: #eeebe1;
-    --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8);
-  }
-}
-
-:root[data-theme='dark'] {
   color-scheme: dark;
   --bg: #0a0b08;
   --bg-2: #11130d;
@@ -70,14 +17,23 @@
   --ink-3: #74766a;
   --line: rgba(238, 235, 225, 0.1);
   --line-strong: rgba(238, 235, 225, 0.22);
-  --accent: #a3b06c;
-  --accent-fill: #4b5320;
+  --accent: #a3b06c;      /* army green, light tint for text on black */
+  --accent-fill: #4b5320; /* army green */
   --accent-hover: #5a6328;
   --on-accent: #f3efe4;
   --accent-soft: rgba(163, 176, 108, 0.12);
+  --sand: #b9a774;
   --panel-bg: #1a1e12;
   --panel-ink: #eeebe1;
   --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8);
+
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --container: 1320px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --banner-h: 40px;
+  --header-h: 76px;
 }
 
 /* ---------- Base ---------- */
@@ -92,7 +48,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
-  transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
 }
 img, svg, video { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }

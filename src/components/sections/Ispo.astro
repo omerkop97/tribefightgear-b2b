@@ -135,6 +135,10 @@ const facts = [
   @media (min-width: 1024px) {
     .ispo__grid { grid-template-columns: 1.35fr 1fr; gap: 80px; }
   }
+  /* A phone cannot scan its own screen: the buttons cover booking there. */
+  @media (max-width: 1023px) {
+    .ispo__qr { display: none; }
+  }
   @media (max-width: 600px) {
     .ispo__facts { grid-template-columns: 1fr; }
     .fact { border-left: 0; border-top: 1px solid rgba(239, 236, 226, 0.16); grid-template-columns: auto 1fr; align-items: center; column-gap: 12px; }

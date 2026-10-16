@@ -15,7 +15,6 @@ export const nl: typeof en = {
     book: 'Plan een meeting',
     menu: 'Menu',
     close: 'Sluiten',
-    theme: 'Wissel tussen licht / donker',
     allProducts: 'Alle producten',
   },
   banner: {

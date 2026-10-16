@@ -13,7 +13,6 @@ export const en = {
     book: 'Book a meeting',
     menu: 'Menu',
     close: 'Close',
-    theme: 'Toggle light / dark mode',
     allProducts: 'All products',
   },
   banner: {

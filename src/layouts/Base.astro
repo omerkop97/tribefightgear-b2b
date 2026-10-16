@@ -33,16 +33,11 @@ const canonical = new URL(localePath(lang, path), Astro.site);
     <meta property="og:description" content={desc} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content={new URL('/images/products/gloves/warrior/1-1400.webp', Astro.site)} />
-    <meta name="theme-color" content="#f3efe4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0a0b08" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0a0b08" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>
       (function () {
         var d = document.documentElement;
-        try {
-          var s = localStorage.getItem('theme');
-          if (s === 'light' || s === 'dark') d.setAttribute('data-theme', s);
-        } catch (e) {}
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           d.classList.add('motion');
           // Fail-safe: never leave content hidden if the motion script does not run.

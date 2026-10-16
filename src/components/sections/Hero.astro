@@ -89,7 +89,7 @@ const lines = d.hero.title;
   .hero__visual { position: relative; display: grid; place-items: center; }
   .hero__glow {
     position: absolute; inset: 10%;
-    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(163, 176, 108, 0.28) 0%, transparent 62%);
     filter: blur(20px);
     transform: scale(1.4);
   }
@@ -100,7 +100,6 @@ const lines = d.hero.title;
     filter: drop-shadow(0 50px 60px rgba(0, 0, 0, 0.35));
     will-change: transform;
   }
-  :global([data-theme-current='dark']) .hero__glow { background: radial-gradient(circle, rgba(163, 176, 108, 0.28) 0%, transparent 62%); }
   .hero__foot {
     display: flex; justify-content: space-between; align-items: center;
     padding-block: 24px;

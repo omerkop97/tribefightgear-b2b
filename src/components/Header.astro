@@ -52,10 +52,6 @@ const links = [
       <a class="tool tool--lang" href={localePath(other, path)} hreflang={other} lang={other} aria-label={other === 'nl' ? 'Nederlands' : 'English'}>
         <span class:list={{ on: lang === 'en' }}>EN</span><span class="sep">/</span><span class:list={{ on: lang === 'nl' }}>NL</span>
       </a>
-      <button class="tool tool--theme" type="button" data-theme-toggle aria-label={d.nav.theme} title={d.nav.theme}>
-        <Icon name="sun" class="i-sun" />
-        <Icon name="moon" class="i-moon" />
-      </button>
       <a class="btn btn--primary btn--sm header__cta" href={BOOKING_URL} target="_blank" rel="noopener">
         <Icon name="calendar" /> {d.nav.book}
       </a>
@@ -141,9 +137,6 @@ const links = [
   .tool--lang { display: inline-flex; gap: 4px; padding: 0 12px; font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; color: var(--ink-3); }
   .tool--lang .on { color: var(--ink); }
   .tool--lang .sep { opacity: 0.4; }
-  .tool--theme :global(.i-moon) { display: none; }
-  :global([data-theme-current='dark']) .tool--theme :global(.i-sun) { display: none; }
-  :global([data-theme-current='dark']) .tool--theme :global(.i-moon) { display: block; }
   .header__cta { display: none; }
 
   @media (min-width: 1180px) {

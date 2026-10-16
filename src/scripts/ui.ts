@@ -1,34 +1,3 @@
-const root = document.documentElement;
-
-/* ---------- Theme ---------- */
-const media = window.matchMedia('(prefers-color-scheme: dark)');
-
-function currentTheme(): 'light' | 'dark' {
-  const forced = root.getAttribute('data-theme');
-  if (forced === 'light' || forced === 'dark') return forced;
-  return media.matches ? 'dark' : 'light';
-}
-function syncTheme() {
-  root.setAttribute('data-theme-current', currentTheme());
-}
-syncTheme();
-media.addEventListener('change', syncTheme);
-
-document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const next = currentTheme() === 'dark' ? 'light' : 'dark';
-    // Matching the system preference again means: follow the system from now on.
-    if ((next === 'dark') === media.matches) {
-      root.removeAttribute('data-theme');
-      try { localStorage.removeItem('theme'); } catch {}
-    } else {
-      root.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch {}
-    }
-    syncTheme();
-  });
-});
-
 /* ---------- Mobile menu ---------- */
 const menu = document.querySelector<HTMLElement>('[data-menu]');
 const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
