@@ -29,7 +29,6 @@ const models = allModels(c);
 const photoCount = models.reduce((n, m) => n + m.images, 0);
 const allPhotos = models.flatMap((m) => Array.from({ length: m.images }, (_, k) => img(c.id, m.slug, k + 1, 700)));
 const cover = models.find((m) => m.slug === c.cover) ?? models[0];
-const coverAlt = cover ? models.find((m) => m.slug !== cover.slug) : undefined;
 
 // Tiers with photographed models get a full section; the others are bundled into one "next levels" block.
 const fullTiers = c.tiers.filter((tier) => tier.models.length > 0);
@@ -72,7 +71,6 @@ const closeups = models.length
           <>
             <div class="chero__glow" aria-hidden="true"></div>
             <img class="chero__main" data-hero-product src={img(c.id, cover.slug, 1, 1400)} srcset={srcset(c.id, cover.slug, 1)} sizes="(min-width: 1024px) 45vw, 90vw" alt={`${cover.name} ${cover.type[lang]}`} width="1400" height="1400" fetchpriority="high" />
-            {coverAlt && <img class="chero__float" data-parallax="0.25" src={img(c.id, coverAlt.slug, 1, 700)} alt="" aria-hidden="true" width="700" height="700" />}
           </>
         ) : (
           <div class="chero__type" data-hero-product aria-hidden="true">
@@ -208,7 +206,6 @@ const closeups = models.length
   .chero__visual { position: relative; display: grid; place-items: center; min-height: 320px; }
   .chero__glow { position: absolute; inset: 8%; background: radial-gradient(circle, rgba(163, 176, 108, 0.26) 0%, transparent 62%); filter: blur(20px); transform: scale(1.3); }
   .chero__main { position: relative; width: min(100%, 600px); height: auto; filter: drop-shadow(0 50px 60px rgba(0, 0, 0, 0.35)); }
-  .chero__float { position: absolute; width: 34%; right: -2%; bottom: 2%; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.35)); rotate: 8deg; }
   .chero__type { display: grid; font-family: var(--font-display); font-weight: 800; text-transform: uppercase; font-size: clamp(2.6rem, 6vw, 5.5rem); line-height: 0.92; }
   .chero__type span { color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
   .chero__type span:nth-child(odd) { padding-left: 1em; }
