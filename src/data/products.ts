@@ -11,7 +11,8 @@ export interface Model {
   name: string;
   /** Product type: models are grouped by it, like the sub-folders (Head Guards, Shin Pads…). */
   type: L;
-  material: L;
+  /** Only shown when the client specified it. */
+  material?: L;
   images: number; // number of angles in /public/images/products/<category>/<slug>/
 }
 
@@ -41,6 +42,15 @@ export interface Category {
 }
 
 const PU: L = { en: 'Premium PU', nl: 'Premium PU' };
+const LEATHER: L = { en: 'Leather', nl: 'Leer' };
+const MICRO: L = { en: 'Microfibre', nl: 'Microfiber' };
+
+const BOXING: L = { en: 'Boxing gloves', nl: 'Bokshandschoenen' };
+const HEAD: L = { en: 'Head guards', nl: 'Hoofdbeschermers' };
+const SHIN: L = { en: 'Shin pads', nl: 'Scheenbeschermers' };
+const FOCUS: L = { en: 'Focus pads', nl: 'Focus pads' };
+const ARM: L = { en: 'Arm pads', nl: 'Arm pads' };
+const BELLY: L = { en: 'Belly pads', nl: 'Buikbeschermers' };
 
 export const TIERS: Record<TierId, { name: string; tagline: L; body: L }> = {
   essential: {
@@ -63,8 +73,8 @@ export const TIERS: Record<TierId, { name: string; tagline: L; body: L }> = {
     name: 'Elite',
     tagline: { en: 'No compromise', nl: 'Geen compromissen' },
     body: {
-      en: 'Hand-finished flagship constructions with the best materials we source. For brands that compete at the top.',
-      nl: 'Met de hand afgewerkte topmodellen met de beste materialen die we inkopen. Voor merken die aan de top meedoen.',
+      en: 'Flagship constructions in leather and microfibre, finished in white and gold. For brands that compete at the top.',
+      nl: 'Topmodellen in leer en microfiber, afgewerkt in wit en goud. Voor merken die aan de top meedoen.',
     },
   },
 };
@@ -74,21 +84,21 @@ export const CATEGORIES: Category[] = [
     id: 'gloves',
     name: { en: 'Gloves', nl: 'Handschoenen' },
     short: {
-      en: 'Boxing, kickboxing, Muay Thai and MMA gloves, training, sparring and competition.',
-      nl: 'Boks-, kickboks-, Muay Thai- en MMA-handschoenen, training, sparring en wedstrijd.',
+      en: 'Boxing and MMA gloves for training, sparring and competition.',
+      nl: 'Boks- en MMA-handschoenen voor training, sparring en wedstrijd.',
     },
     intro: {
-      en: 'Our core. From high-volume PU training gloves to hand-finished leather flagships, every glove can be developed into your own model.',
-      nl: 'Onze kern. Van PU-trainingshandschoenen op volume tot met de hand afgewerkte leren topmodellen, elke handschoen kan worden doorontwikkeld tot jouw eigen model.',
+      en: 'Our core. From high-volume PU training gloves to leather and microfibre Elite flagships, every glove can be developed into your own model.',
+      nl: 'Onze kern. Van PU-trainingshandschoenen op volume tot Elite-topmodellen in leer en microfiber, elke handschoen kan worden doorontwikkeld tot jouw eigen model.',
     },
-    cover: 'warrior',
+    cover: 'apex',
     tiers: [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala', name: 'Aiba', type: { en: 'Boxing gloves', nl: 'Bokshandschoenen' }, material: PU, images: 6 },
-          { slug: 'dotline', name: 'AD', type: { en: 'Boxing gloves', nl: 'Bokshandschoenen' }, material: PU, images: 6 },
-          { slug: 'warrior', name: 'RDX', type: { en: 'Boxing gloves', nl: 'Bokshandschoenen' }, material: PU, images: 6 },
+          { slug: 'mandala', name: 'Aiba', type: BOXING, material: PU, images: 6 },
+          { slug: 'dotline', name: 'AD', type: BOXING, material: PU, images: 6 },
+          { slug: 'warrior', name: 'RDX', type: BOXING, material: PU, images: 6 },
         ],
       },
       {
@@ -101,11 +111,11 @@ export const CATEGORIES: Category[] = [
       },
       {
         id: 'elite',
-        models: [],
-        planned: {
-          en: 'Apex (full leather) and two microfibre flagships, presented at ISPO 2026.',
-          nl: 'Apex (volledig leer) en twee microfiber-topmodellen, gepresenteerd op ISPO 2026.',
-        },
+        models: [
+          { slug: 'apex', name: 'Apex', type: BOXING, material: LEATHER, images: 3 },
+          { slug: 'glory', name: 'Glory', type: BOXING, material: MICRO, images: 3 },
+          { slug: 'fly', name: 'Fly', type: BOXING, material: MICRO, images: 3 },
+        ],
       },
     ],
     collections: [
@@ -113,18 +123,10 @@ export const CATEGORIES: Category[] = [
         id: 'mma',
         name: { en: 'MMA Gloves', nl: 'MMA-handschoenen' },
         intro: {
-          en: 'Open-palm MMA gloves for sparring and grappling, the same construction quality, built for mixed martial arts.',
-          nl: 'MMA-handschoenen met open handpalm voor sparring en grappling, dezelfde bouwkwaliteit, gemaakt voor mixed martial arts.',
+          en: 'Open-finger MMA gloves in three colourways, with the same construction quality as our boxing gloves.',
+          nl: 'MMA-handschoenen met open vingers in drie kleurstellingen, met dezelfde bouwkwaliteit als onze bokshandschoenen.',
         },
-        models: [
-          {
-            slug: 'mma-hybrid',
-            name: 'Venum',
-            type: { en: 'MMA gloves', nl: 'MMA-handschoenen' },
-            material: { en: 'Microfibre', nl: 'Microfiber' },
-            images: 6,
-          },
-        ],
+        models: [{ slug: 'mma-hybrid', name: 'Venum', type: { en: 'MMA gloves', nl: 'MMA-handschoenen' }, images: 9 }],
       },
     ],
   },
@@ -132,72 +134,112 @@ export const CATEGORIES: Category[] = [
     id: 'protective',
     name: { en: 'Protective Equipment', nl: 'Bescherming' },
     short: {
-      en: 'Head guards, shin guards and body protection.',
-      nl: 'Hoofdbeschermers, scheenbeschermers en bodyprotectie.',
+      en: 'Head guards and shin pads, from Essential to Elite.',
+      nl: 'Hoofdbeschermers en scheenbeschermers, van Essential tot Elite.',
     },
     intro: {
       en: 'Protection that fighters trust: shaped foams, secure closures and finishes that match your glove line.',
       nl: 'Bescherming waar vechters op vertrouwen: gevormde foams, stevige sluitingen en afwerking die aansluit op je handschoenenlijn.',
     },
-    cover: 'warrior-headguard',
+    cover: 'apex-headguard',
     tiers: [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala-headguard', name: 'Aiba', type: { en: 'Head guards', nl: 'Hoofdbeschermers' }, material: PU, images: 6 },
-          { slug: 'dotline-headguard', name: 'AD', type: { en: 'Head guards', nl: 'Hoofdbeschermers' }, material: PU, images: 6 },
-          { slug: 'warrior-headguard', name: 'RDX', type: { en: 'Head guards', nl: 'Hoofdbeschermers' }, material: PU, images: 6 },
-          { slug: 'mandala-shinguard', name: 'Aiba', type: { en: 'Shin pads', nl: 'Scheenbeschermers' }, material: PU, images: 6 },
-          { slug: 'dotline-shinguard', name: 'AD', type: { en: 'Shin pads', nl: 'Scheenbeschermers' }, material: PU, images: 6 },
-          { slug: 'warrior-shinguard', name: 'RDX', type: { en: 'Shin pads', nl: 'Scheenbeschermers' }, material: PU, images: 6 },
+          { slug: 'mandala-headguard', name: 'Aiba', type: HEAD, material: PU, images: 6 },
+          { slug: 'dotline-headguard', name: 'AD', type: HEAD, material: PU, images: 6 },
+          { slug: 'warrior-headguard', name: 'RDX', type: HEAD, material: PU, images: 6 },
+          { slug: 'mandala-shinguard', name: 'Aiba', type: SHIN, material: PU, images: 6 },
+          { slug: 'dotline-shinguard', name: 'AD', type: SHIN, material: PU, images: 6 },
+          { slug: 'warrior-shinguard', name: 'RDX', type: SHIN, material: PU, images: 6 },
         ],
       },
-      { id: 'performance', models: [], planned: { en: 'Leather protection line, in development.', nl: 'Leren beschermingslijn, in ontwikkeling.' } },
-      { id: 'elite', models: [], planned: { en: 'Flagship protection, in development.', nl: 'Topmodellen bescherming, in ontwikkeling.' } },
+      { id: 'performance', models: [], planned: { en: 'Performance protection, presented at ISPO 2026.', nl: 'Performance-bescherming, gepresenteerd op ISPO 2026.' } },
+      {
+        id: 'elite',
+        models: [
+          { slug: 'apex-headguard', name: 'Apex', type: HEAD, images: 3 },
+          { slug: 'glory-headguard', name: 'Glory', type: HEAD, images: 4 },
+          { slug: 'fly-headguard', name: 'Fly', type: HEAD, images: 1 },
+          { slug: 'apex-shinguard', name: 'Apex', type: SHIN, images: 3 },
+          { slug: 'glory-shinguard', name: 'Glory', type: SHIN, images: 3 },
+          { slug: 'fly-shinguard', name: 'Fly', type: SHIN, images: 4 },
+        ],
+      },
     ],
   },
   {
     id: 'coaching',
     name: { en: 'Coaching Equipment', nl: 'Trainersmateriaal' },
     short: {
-      en: 'Focus mitts, Thai pads and kick shields.',
-      nl: 'Focus mitts, Thai pads en trapkussens.',
+      en: 'Focus pads, arm pads and belly pads.',
+      nl: 'Focus pads, arm pads en buikbeschermers.',
     },
     intro: {
       en: 'Equipment trainers use for hours every day, built to absorb impact and keep its shape.',
       nl: 'Materiaal dat trainers dagelijks urenlang gebruiken, gemaakt om impact op te vangen en in vorm te blijven.',
     },
-    cover: 'mandala-focus-pads',
+    cover: 'glory-focus-long',
     tiers: [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala-focus-pads', name: 'Aiba', type: { en: 'Focus pads', nl: 'Focus pads' }, material: PU, images: 6 },
-          { slug: 'warrior-focus-pads', name: 'RDX', type: { en: 'Focus pads', nl: 'Focus pads' }, material: PU, images: 2 },
+          { slug: 'mandala-focus-pads', name: 'Aiba', type: FOCUS, material: PU, images: 6 },
+          { slug: 'warrior-focus-pads', name: 'RDX', type: FOCUS, material: PU, images: 2 },
         ],
       },
-      { id: 'performance', models: [], planned: { en: 'Leather Thai pads and kick shields, in development.', nl: 'Leren Thai pads en trapkussens, in ontwikkeling.' } },
-      { id: 'elite', models: [], planned: { en: 'Flagship coaching line, in development.', nl: 'Topmodellen trainersmateriaal, in ontwikkeling.' } },
+      { id: 'performance', models: [], planned: { en: 'Performance coaching line, presented at ISPO 2026.', nl: 'Performance-trainersmateriaal, gepresenteerd op ISPO 2026.' } },
+      {
+        id: 'elite',
+        models: [
+          { slug: 'glory-focus-long', name: 'Glory Long', type: FOCUS, images: 3 },
+          { slug: 'glory-focus-short', name: 'Glory Short', type: FOCUS, images: 3 },
+          { slug: 'glory-focus-mini', name: 'Glory Mini', type: FOCUS, images: 3 },
+          { slug: 'fly-focus-pads', name: 'Fly', type: FOCUS, images: 3 },
+          { slug: 'apex-arm-pads', name: 'Apex', type: ARM, images: 3 },
+          { slug: 'glory-arm-pads', name: 'Glory', type: ARM, images: 3 },
+          { slug: 'fly-arm-pads', name: 'Fly', type: ARM, images: 3 },
+          { slug: 'glory-belly-pads', name: 'Glory', type: BELLY, images: 3 },
+        ],
+      },
     ],
   },
   {
     id: 'fightwear',
     name: { en: 'Fightwear & Accessories', nl: 'Fightwear & Accessoires' },
     short: {
-      en: 'Shorts, rash guards, hand wraps and bags to complete your collection.',
-      nl: 'Shorts, rashguards, bandages en tassen om je collectie compleet te maken.',
+      en: 'Speedballs, shin instep guards, groin guards and boxing shoes.',
+      nl: 'Speedballs, scheen-wreefbeschermers, toks en boksschoenen.',
     },
     intro: {
-      en: 'Complete the collection: apparel and accessories in the same design language as your equipment.',
-      nl: 'Maak de collectie compleet: kleding en accessoires in dezelfde designtaal als je materiaal.',
+      en: 'Complete the collection: accessories in the same design language as your equipment.',
+      nl: 'Maak de collectie compleet: accessoires in dezelfde designtaal als je materiaal.',
     },
-    tiers: [
-      { id: 'essential', models: [], planned: { en: 'Hand wraps, shorts and training apparel, on request.', nl: 'Bandages, shorts en trainingskleding, op aanvraag.' } },
-      { id: 'performance', models: [], planned: { en: 'Fight shorts and rash guards, on request.', nl: 'Fight shorts en rashguards, op aanvraag.' } },
-      { id: 'elite', models: [], planned: { en: 'Signature fightwear, on request.', nl: 'Signature fightwear, op aanvraag.' } },
+    cover: 'boxing-shoes',
+    tiers: [],
+    collections: [
+      {
+        id: 'accessories',
+        name: { en: 'Accessories', nl: 'Accessoires' },
+        intro: {
+          en: 'Training and fight accessories, available in the Tribe Gear black and white-gold lines.',
+          nl: 'Trainings- en wedstrijdaccessoires, beschikbaar in de zwarte en wit-gouden Tribe Gear-lijnen.',
+        },
+        models: [
+          { slug: 'speedball', name: 'Speedball', type: { en: 'Speedballs', nl: 'Speedballs' }, images: 6 },
+          { slug: 'shin-instep', name: 'Shin In Step', type: { en: 'Shin instep guards', nl: 'Scheen-wreefbeschermers' }, images: 5 },
+          { slug: 'groin-guard', name: 'Groin Guard', type: { en: 'Groin guards', nl: 'Toks' }, images: 2 },
+          { slug: 'boxing-shoes', name: 'Boxing Shoes', type: { en: 'Boxing shoes', nl: 'Boksschoenen' }, images: 5 },
+        ],
+      },
     ],
   },
 ];
+
+/** Every model in a category: levels first, then collections. */
+export function allModels(c: Category): Model[] {
+  return [...c.tiers.flatMap((t) => t.models), ...(c.collections ?? []).flatMap((col) => col.models)];
+}
 
 export function img(category: CategoryId, slug: string, n: number, size: 700 | 1400 = 1400) {
   return `/images/products/${category}/${slug}/${n}-${size}.webp`;

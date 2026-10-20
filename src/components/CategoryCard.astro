@@ -1,12 +1,13 @@
 ---
 import Icon from './Icon.astro';
-import { img, srcset, TIERS, type Category } from '../data/products';
+import { allModels, img, srcset, TIERS, type Category } from '../data/products';
 import { localePath, t, type Lang } from '../i18n';
 
 interface Props { category: Category; index: number; lang: Lang; }
 const { category: c, index, lang } = Astro.props;
 const d = t(lang);
-const cover = c.cover ? c.tiers.flatMap((tier) => tier.models).find((m) => m.slug === c.cover) : undefined;
+const cover = c.cover ? allModels(c).find((m) => m.slug === c.cover) : undefined;
+const chips = c.tiers.length ? c.tiers.map((tier) => TIERS[tier.id].name) : (c.collections ?? []).map((col) => col.name[lang]);
 const frames = cover ? Array.from({ length: cover.images }, (_, i) => img(c.id, cover.slug, i + 1, 700)).join('|') : '';
 ---
 <a href={localePath(lang, `/products/${c.id}`)} class="ccard">
@@ -24,7 +25,7 @@ const frames = cover ? Array.from({ length: cover.images }, (_, i) => img(c.id, 
     <h3 class="display-s">{c.name[lang]}</h3>
     <p class="muted">{c.short[lang]}</p>
     <div class="ccard__tiers">
-      {c.tiers.map((tier) => <span>{TIERS[tier.id].name}</span>)}
+      {chips.map((chip) => <span>{chip}</span>)}
     </div>
     <span class="link-arrow">{d.cta.explore} <Icon name="arrow" /></span>
   </div>

@@ -52,7 +52,7 @@ const group = `${category}-${m.slug}`;
     <span class="eyebrow">{m.type[lang]}</span>
     <h3 class="mf__name" data-split>{m.name}</h3>
     <dl class="mf__specs" data-reveal>
-      <div><dt>{d.products.material}</dt><dd>{m.material[lang]}</dd></div>
+      {m.material && <div><dt>{d.products.material}</dt><dd>{m.material[lang]}</dd></div>}
       <div><dt>{d.products.angleCount}</dt><dd>{m.images}</dd></div>
       <div><dt>{lang === 'nl' ? 'Lijn' : 'Line'}</dt><dd>{label}</dd></div>
     </dl>

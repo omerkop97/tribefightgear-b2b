@@ -51,7 +51,7 @@ export const nl: typeof en = {
     stand: 'Stand',
     qr: 'Scan om te boeken',
     qrNote: 'Opent WhatsApp. We bevestigen je afspraak persoonlijk.',
-    actions: ['Producten zien & testen', 'OEM / ODM bespreken', 'Materialen bekijken', 'Productie plannen'],
+    actions: ['Producten zien & testen', 'OEM / ODM bespreken', 'Materialen bekijken', 'Productie plannen', 'Maak kennis met Bart'],
   },
   categories: {
     eyebrow: 'Ons assortiment',
@@ -157,8 +157,8 @@ export const nl: typeof en = {
     nextImg: 'Volgende',
     options: 'Aan te passen',
     optionList: ['Materiaal', 'Kleurstelling', 'Logo & branding', 'Padding', 'Sluiting', 'Verpakking'],
-    comingTitle: 'Volgende niveaus',
-    comingBody: 'Performance- en Elite-modellen worden exclusief gepresenteerd op ISPO 2026. Plan een afspraak om ze als eerste te zien en te testen.',
+    comingTitle: 'Te zien op ISPO',
+    comingBody: 'Onze Performance-lijn wordt exclusief gepresenteerd op ISPO 2026. Plan een afspraak om hem als eerste te zien en te testen.',
     customise: {
       eyebrow: 'Maak het van jou',
       title: 'Elk detail, jouw keuze',

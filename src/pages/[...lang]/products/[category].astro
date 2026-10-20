@@ -5,7 +5,7 @@ import ModelGroups from '../../../components/ModelGroups.astro';
 import PhotoStrip from '../../../components/PhotoStrip.astro';
 import Customise from '../../../components/Customise.astro';
 import FinalCta from '../../../components/sections/FinalCta.astro';
-import { CATEGORIES, TIERS, img, srcset, type Category } from '../../../data/products';
+import { CATEGORIES, TIERS, allModels, img, srcset, type Category } from '../../../data/products';
 import { BOOKING_URL, whatsappUrl } from '../../../data/site';
 import { LANGS, DEFAULT_LANG, langFromParam, localePath, t } from '../../../i18n';
 
@@ -25,7 +25,7 @@ const idx = CATEGORIES.findIndex((x) => x.id === c.id);
 const next = CATEGORIES[(idx + 1) % CATEGORIES.length];
 
 const collections = c.collections ?? [];
-const models = [...c.tiers.flatMap((tier) => tier.models), ...collections.flatMap((col) => col.models)];
+const models = allModels(c);
 const photoCount = models.reduce((n, m) => n + m.images, 0);
 const allPhotos = models.flatMap((m) => Array.from({ length: m.images }, (_, k) => img(c.id, m.slug, k + 1, 700)));
 const cover = models.find((m) => m.slug === c.cover) ?? models[0];
@@ -60,7 +60,7 @@ const closeups = models.length
         <dl class="chero__stats" data-hero-in>
           <div><dt>{d.products.models}</dt><dd>{models.length}</dd></div>
           <div><dt>{d.products.photos}</dt><dd>{photoCount}</dd></div>
-          <div><dt>{d.products.levels}</dt><dd>3</dd></div>
+          {c.tiers.length > 0 && <div><dt>{d.products.levels}</dt><dd>{c.tiers.length}</dd></div>}
         </dl>
         <div class="chero__ctas" data-hero-in>
           <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
@@ -117,7 +117,7 @@ const closeups = models.length
     <section class="tier section tier--collection" id={col.id}>
       <div class="container">
         <header class="tier__head">
-          <span class="tier__n tier__n--col" aria-hidden="true">{col.name.en.split(' ')[0]}</span>
+          {col.name.en.includes(' ') && <span class="tier__n tier__n--col" aria-hidden="true">{col.name.en.split(' ')[0]}</span>}
           <div class="tier__titles">
             <span class="eyebrow">{c.name[lang]}</span>
             <h2 class="display-l" data-split>{col.name[lang]}</h2>
@@ -233,7 +233,7 @@ const closeups = models.length
   @media (min-width: 1024px) { .tier__head { grid-template-columns: auto 1fr 1fr; gap: 40px; } }
   .tier + .tier { border-top: 1px solid var(--line); }
   .tier--collection { background: var(--bg-2); }
-  .tier__n--col { font-size: clamp(4rem, 8vw, 7rem); }
+  .tier__n--col { font-size: clamp(4rem, 8vw, 7rem); text-transform: uppercase; }
 
   .next { scroll-margin-top: 60px; }
   .next__title { display: grid; gap: 16px; }
@@ -249,6 +249,11 @@ const closeups = models.length
   .soon__tag { font-weight: 600; color: var(--accent); }
   .soon--elite .soon__tier { color: var(--sand); }
   .soon--elite { border-color: color-mix(in srgb, var(--sand) 45%, transparent); }
+  .soon:only-child { grid-column: 1 / -1; }
+  @media (min-width: 1100px) { .soon:only-child { grid-template-columns: 1fr 1.2fr; } .soon:only-child .soon__img { aspect-ratio: auto; min-height: 280px; } }
+  .tier--elite { background: var(--bg-2); }
+  .tier--elite .tier__n { -webkit-text-stroke-color: var(--sand); }
+  .tier--elite .eyebrow { color: var(--sand); }
 
   .nextcat { display: block; border-top: 1px solid var(--line); transition: background-color 0.4s var(--ease); }
   .nextcat:hover { background: var(--accent-soft); }

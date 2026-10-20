@@ -141,11 +141,13 @@ Na ISPO: banner uitschakelen/ombouwen, fabrieksvideo toevoegen, Performance/Elit
 
 - Productpagina's volgen de mappenstructuur: Essential → Gloves / Protective (Head guards, Shin pads) / Coaching (Focus pads); MMA Gloves als eigen collectie. Per model grote presentatie met alle hoeken, fullscreen viewer, fotostrook, "Make it yours"-sectie; Performance/Elite gebundeld als "Next levels — ISPO".
 
+- Tweede fotolevering (17 okt, 140 foto's) verwerkt: Elite (Apex, Glory, Fly) in Gloves, Protective en Coaching; Accessories (Speedball, Shin In Step, Groin Guard, Boxing Shoes) onder Fightwear & Accessories; Venum MMA nu 9 foto's. Apex is de hero-foto.
+
 **Nog te doen / aanleveren:**
 1. Google Calendar *Appointment schedule* aanmaken → link in `src/data/site.ts` (`BOOKING_URL`). Nu opent een vooringevulde agenda-afspraak; die meldt de afspraak niet bij jullie.
 2. ~~Logo~~ ✔ verwerkt (gevectoriseerd naar SVG: `src/assets/brand/`, losse bestanden in `public/brand/`, favicon).
 3. Domein → `site` in `astro.config.mjs`; zakelijke e-mail → `EMAIL` in `src/data/site.ts`.
 4. Portretten Bart & Jan → `public/images/team/`, pad invullen in `src/components/PeopleCards.astro`.
-5. Foto's Performance/Elite, Fightwear, fabrieksvideo.
+5. Foto's Performance-lijn, kledingstukken (fightwear), fabrieksvideo.
 6. Productnamen: voorlopig de mapnamen van de klant (Aiba, AD, RDX, Venum). Let op: RDX en Venum zijn merknamen van derden — vóór livegang definitieve namen bevestigen.
 7. Hosting (Vercel/Netlify) + livegang.

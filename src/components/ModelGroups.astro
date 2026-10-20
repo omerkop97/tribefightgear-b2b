@@ -9,13 +9,15 @@ const { models, category, categoryName, label, lang } = Astro.props;
 const d = t(lang);
 const groups = new Map<string, Model[]>();
 for (const m of models) groups.set(m.type.en, [...(groups.get(m.type.en) ?? []), m]);
+// One model per type (e.g. accessories): the model name already says what it is, so skip the sub-headings.
+const showTitles = [...groups.values()].some((g) => g.length > 1);
 ---
 {[...groups.values()].map((group) => (
   <div class="group">
-    <h3 class="group__title" data-reveal>
+    {showTitles && <h3 class="group__title" data-reveal>
       <span>{group[0].type[lang]}</span>
-      <small>{group.length} {group.length === 1 ? (lang === 'nl' ? 'model' : 'model') : d.products.models}</small>
-    </h3>
+      <small>{group.length} {group.length === 1 ? 'model' : d.products.models}</small>
+    </h3>}
     <div class="group__models">
       {group.map((m, k) => (
         <ModelFeature model={m} category={category} categoryName={categoryName} label={label} index={k} lang={lang} />
@@ -26,6 +28,7 @@ for (const m of models) groups.set(m.type.en, [...(groups.get(m.type.en) ?? []),
 
 <style>
   .group + .group { margin-top: clamp(56px, 8vw, 112px); }
+  .group:has(+ .group) :global(.mf:last-child) { padding-bottom: 0; }
   .group__title {
     display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
     padding-bottom: 16px; margin-bottom: clamp(28px, 4vw, 48px);

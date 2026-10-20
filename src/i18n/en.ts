@@ -49,7 +49,7 @@ export const en = {
     stand: 'Stand',
     qr: 'Scan to book',
     qrNote: 'Opens WhatsApp. We confirm your slot personally.',
-    actions: ['See & test products', 'Discuss OEM / ODM', 'Check our materials', 'Plan production'],
+    actions: ['See & test products', 'Discuss OEM / ODM', 'Check our materials', 'Plan production', 'Meet Bart'],
   },
   categories: {
     eyebrow: 'Our range',
@@ -155,8 +155,8 @@ export const en = {
     nextImg: 'Next',
     options: 'Customisable',
     optionList: ['Material', 'Colourway', 'Logo & branding', 'Padding', 'Closure', 'Packaging'],
-    comingTitle: 'Next levels',
-    comingBody: 'Performance and Elite constructions are presented exclusively at ISPO 2026. Book a slot to see and test them first.',
+    comingTitle: 'Coming at ISPO',
+    comingBody: 'Our Performance line is presented exclusively at ISPO 2026. Book a slot to see and test it first.',
     customise: {
       eyebrow: 'Make it yours',
       title: 'Every detail, your call',
