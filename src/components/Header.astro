@@ -2,7 +2,8 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { BOOKING_URL } from '../data/site';
-import { LINES, productsInLine } from '../data/shop';
+import { CATEGORIES } from '../data/products';
+import { linesInCategory, productsIn } from '../data/shop';
 import { localePath, t, type Lang } from '../i18n';
 
 interface Props { lang: Lang; path: string; }
@@ -11,6 +12,18 @@ const d = t(lang);
 const p = (to: string) => localePath(lang, to);
 const other: Lang = lang === 'en' ? 'nl' : 'en';
 const isActive = (to: string) => path === to || path.startsWith(to + '/');
+
+// Only lines without products yet get a note; no product counts.
+const note = (n: number) => (n ? '' : 'ISPO 2026');
+
+// Each category opens to its lines (levels, or Accessories / Fightwear).
+const menus = CATEGORIES.map((c) => {
+  const lines = linesInCategory(c.id);
+  const items = lines.length > 1
+    ? lines.map((l) => ({ href: `/products/${c.id}/${l.id}`, name: l.name[lang], meta: note(productsIn(c.id, l.id).length), tone: l.id }))
+    : [];
+  return { id: c.id, name: c.name[lang], items };
+});
 
 const links = [
   { to: '/oem-odm', label: d.nav.build },
@@ -25,32 +38,39 @@ const links = [
     <a href={p('/')} class="header__logo"><Logo /></a>
 
     <nav class="nav" aria-label="Main">
-      <div class="nav__item nav__item--drop">
-        <a href={p('/products')} class:list={['nav__link', { 'is-active': isActive('/products') }]}>
-          {d.nav.products} <Icon name="chevron" />
-        </a>
-        <div class="drop">
-          <div class="drop__inner">
-            {LINES.map((l, i) => (
-              <a href={p(`/products/${l.id}`)} class:list={['drop__link', `drop__link--${l.id}`]}>
-                <span class="drop__num">0{i + 1}</span>
-                <span class="drop__name">{l.name[lang]}</span>
-                <span class="drop__desc">{l.tagline[lang]} · {productsInLine(l.id).length || 'ISPO'} {productsInLine(l.id).length === 1 ? d.shop.product : productsInLine(l.id).length ? d.shop.products : ''}</span>
-              </a>
+      {menus.map((m) => (
+        <div class:list={['nav__item', { 'nav__item--drop': m.items.length > 0 }]}>
+          <a href={p(`/products/${m.id}`)} class:list={['nav__link', { 'is-active': isActive(`/products/${m.id}`) }]}>
+            {m.name} {m.items.length > 0 && <Icon name="chevron" />}
+          </a>
+          {m.items.length > 0 && (
+            <div class="drop">
+              <div class="drop__menu">
+                {m.items.map((it) => (
+                  <a href={p(it.href)} class:list={['drop__row', it.tone && `drop__row--${it.tone}`]}>
+                    <span class="drop__name">{it.name}</span>
+                    {it.meta && <span class="drop__meta">{it.meta}</span>}
+                  </a>
+                ))}
+                <a href={p(`/products/${m.id}`)} class="drop__row drop__row--all">
+                  <span class="drop__name">{d.shop.viewAll} {m.name}</span>
+                  <Icon name="arrow" />
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+      <div class="nav__item nav__item--drop nav__item--company">
+        <span class:list={['nav__link', { 'is-active': links.some((l) => isActive(l.to)) }]} tabindex="0">{d.shop.company} <Icon name="chevron" /></span>
+        <div class="drop drop--right">
+          <div class="drop__menu">
+            {links.map((l) => (
+              <a href={p(l.to)} class="drop__row"><span class="drop__name">{l.label}</span></a>
             ))}
-            <a href={p('/products')} class="drop__link drop__link--all">
-              <span class="drop__num">→</span>
-              <span class="drop__name">{d.shop.allProducts}</span>
-              <span class="drop__desc">{d.shop.allProductsBody}</span>
-            </a>
           </div>
         </div>
       </div>
-      {links.map((l) => (
-        <div class="nav__item">
-          <a href={p(l.to)} class:list={['nav__link', { 'is-active': isActive(l.to) }]}>{l.label}</a>
-        </div>
-      ))}
     </nav>
 
     <div class="header__tools">
@@ -74,11 +94,19 @@ const links = [
     <button class="tool" type="button" data-menu-close><span class="sr-only">{d.nav.close}</span><Icon name="close" /></button>
   </div>
   <nav class="mmenu__nav container" aria-label="Mobile">
-    <a href={p('/products')} class="mmenu__link">{d.nav.products}</a>
-    <div class="mmenu__sub">
-      {LINES.map((l) => <a href={p(`/products/${l.id}`)}>{l.name[lang]}</a>)}
+    {menus.map((m) => (
+      <>
+        <a href={p(`/products/${m.id}`)} class="mmenu__link">{m.name}</a>
+        {m.items.length > 0 && (
+          <div class="mmenu__sub">
+            {m.items.map((it) => <a href={p(it.href)}>{it.name}</a>)}
+          </div>
+        )}
+      </>
+    ))}
+    <div class="mmenu__company">
+    {links.map((l) => <a href={p(l.to)}>{l.label}</a>)}
     </div>
-    {links.map((l) => <a href={p(l.to)} class="mmenu__link">{l.label}</a>)}
   </nav>
   <div class="mmenu__foot container">
     <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
@@ -102,21 +130,23 @@ const links = [
     border-color: var(--line);
   }
   .header.is-hidden { transform: translateY(-100%); }
-  .header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 
   .nav { display: none; align-items: center; gap: 4px; }
   .nav__item { position: relative; }
   .nav__link {
     display: inline-flex; align-items: center; gap: 4px;
-    padding: 10px 14px;
-    font-family: var(--font-display); font-weight: 600; font-size: 1.02rem; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 10px 10px;
+    font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--ink-2);
     transition: color 0.25s;
     position: relative;
   }
-  .nav__link :global(svg) { width: 14px; height: 14px; }
+  .nav__link { white-space: nowrap; }
+  .nav__link :global(svg) { width: 15px; height: 15px; flex: none; color: var(--accent); transition: transform 0.3s var(--ease); }
+  .nav__item--drop:hover .nav__link :global(svg), .nav__item--drop:focus-within .nav__link :global(svg) { transform: rotate(180deg); }
   .nav__link::after {
-    content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 2px; background: var(--accent);
+    content: ''; position: absolute; left: 10px; right: 10px; bottom: 4px; height: 2px; background: var(--accent);
     transform: scaleX(0); transform-origin: left; transition: transform 0.4s var(--ease);
   }
   .nav__link:hover, .nav__link.is-active { color: var(--ink); }
@@ -137,6 +167,19 @@ const links = [
   .drop__link--elite .drop__name { color: var(--sand); }
   .drop__link--all { background: var(--accent-soft); }
 
+  .drop__menu { min-width: 260px; display: grid; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); padding: 8px; }
+  .drop--right { left: auto; right: -12px; }
+  .drop__row { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding: 11px 12px; transition: background-color 0.2s; }
+  .drop__row:hover { background: var(--accent-soft); }
+  .drop__row .drop__name { font-size: 1.05rem; white-space: nowrap; }
+  .drop__meta { font-size: 0.78rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .drop__row--elite .drop__name { color: var(--sand); }
+  .drop__row--all { margin-top: 4px; border-top: 1px solid var(--line); color: var(--accent); align-items: center; }
+  .drop__row--all .drop__name { font-size: 0.95rem; letter-spacing: 0.06em; }
+  .drop__row--all :global(svg) { width: 16px; height: 16px; flex: none; }
+  .nav__item--company .nav__link { cursor: default; }
+  .mmenu__company { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 20px 0; }
+  .mmenu__company a { color: var(--ink-2); font-family: var(--font-display); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
   .header__tools { display: flex; align-items: center; gap: 8px; }
   .tool { height: 42px; min-width: 42px; display: inline-grid; place-items: center; border: 1px solid var(--line); color: var(--ink); transition: border-color 0.25s, background-color 0.25s; }
   .tool:hover { border-color: var(--ink); }
@@ -146,7 +189,17 @@ const links = [
   .tool--lang .sep { opacity: 0.4; }
   .header__cta { display: none; }
 
-  @media (min-width: 1180px) {
+  /* Small desktops: tighter type so all categories, chevrons and tools fit on one row. */
+  @media (min-width: 1280px) {
+    .nav__link { padding-inline: 8px; font-size: 0.95rem; letter-spacing: 0.04em; gap: 3px; }
+    .nav__link::after { left: 8px; right: 8px; }
+  }
+  @media (min-width: 1280px) and (max-width: 1439px) {
+    .nav__link { padding-inline: 7px; font-size: 0.9rem; gap: 2px; }
+    .nav__link::after { left: 7px; right: 7px; }
+    :global(.logo__sub) { display: none; }
+  }
+  @media (min-width: 1280px) {
     .nav { display: flex; }
     .header__cta { display: inline-flex; }
     .tool--menu { display: none; }

@@ -23,6 +23,16 @@ MAP = {
     "Essential/Protective Gear/RDX/Shinpads": ("protective", "warrior-shinguard"),
     "Essential/Coaching Equipment/Aiba/Focus Pads": ("coaching", "mandala-focus-pads"),
     "Essential/Coaching Equipment/RDX/Focus Pads": ("coaching", "warrior-focus-pads"),
+    # Performance
+    "Performance/Gloves/Apex": ("gloves", "performance-apex"),
+    "Performance/Gloves/Top King": ("gloves", "top-king"),
+    "Performance/Gloves/Twins": ("gloves", "twins"),
+    "Performance/Protective Gear/Apex/Head Guards": ("protective", "performance-apex-headguard"),
+    "Performance/Protective Gear/Top King/Head Gear": ("protective", "top-king-headguard"),
+    "Performance/Protective Gear/Twins/Head Guards": ("protective", "twins-headguard"),
+    "Performance/Protective Gear/Apex/Shin Pads": ("protective", "performance-apex-shinguard"),
+    "Performance/Protective Gear/Top King/Shinpads": ("protective", "top-king-shinguard"),
+    "Performance/Protective Gear/Twins/Shinpads": ("protective", "twins-shinguard"),
     # Elite
     "Elite/Gloves/Apex": ("gloves", "apex"),
     "Elite/Gloves/Glory": ("gloves", "glory"),
@@ -55,6 +65,8 @@ for key, target in MAP.items():
     cat, slug = target[0], target[1]
     match = target[2] if len(target) > 2 else None
     folder = os.path.join(src_root, key.split("#")[0])
+    if not os.path.isdir(folder):
+        continue  # folder belongs to another delivery
     files = sorted(
         f for f in os.listdir(folder)
         if f.lower().endswith(".png") and (match is None or match in f)

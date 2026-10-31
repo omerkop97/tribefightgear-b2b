@@ -1,0 +1,12 @@
+---
+import Listing from '../../../components/Listing.astro';
+import { CATEGORIES, type CategoryId } from '../../../data/products';
+import { LANGS, DEFAULT_LANG, langFromParam } from '../../../i18n';
+
+export function getStaticPaths() {
+  return LANGS.flatMap((lang) => CATEGORIES.map((c) => ({ params: { lang: lang === DEFAULT_LANG ? undefined : lang, category: c.id } })));
+}
+
+const lang = langFromParam(Astro.params.lang);
+---
+<Listing lang={lang} category={Astro.params.category as CategoryId} />

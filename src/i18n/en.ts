@@ -36,7 +36,7 @@ export const en = {
   trust: [
     { count: 30, suffix: '+', label: 'Customised products' },
     { count: 20, suffix: '+', label: 'Years of combat sports experience' },
-    { count: 20, suffix: '+', label: 'Years of manufacturing experience' },
+    { count: 12, suffix: '+', label: 'Years of manufacturing experience' },
     { text: 'EU', label: 'European market served, local support' },
   ],
   ispo: {
@@ -92,7 +92,7 @@ export const en = {
     title: ['Skilled people.', 'Serious capacity.'],
     body:
       'Premium fight equipment requires skilled hands, structured production and consistent quality. Built to scale with your brand, from first runs to high-volume manufacturing.',
-    video: 'Factory film coming soon',
+    watch: 'Watch the film',
     steps: ['Cutting', 'Moulding', 'Stitching', 'Branding', 'Assembly', 'Quality control', 'Packing', 'Warehouse'],
     cta: 'Discuss capacity',
   },
@@ -190,6 +190,14 @@ export const en = {
     requestMsg: "Hi Tribe Gear, I'm interested in {title} (art. no. {sku}) for my brand.",
     comingTitle: 'Coming at ISPO 2026',
     viewLine: 'View line',
+    viewAll: 'View all',
+    colour: 'Colour',
+    closure: 'Closure',
+    alsoIn: 'Also available in',
+    company: 'Company',
+    stripTitle: 'Develop this for your brand',
+    stripLine: 'Develop {name} for your brand',
+    stripBody: 'Tell us about your brand, quantities and timing. We reply personally.',
   },
   pages: {
     build: { title: 'OEM, ODM & Private Label', body: 'Three routes to your own fight gear, each backed by the same production standard.' },

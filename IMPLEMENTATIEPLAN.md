@@ -145,12 +145,14 @@ Na ISPO: banner uitschakelen/ombouwen, fabrieksvideo toevoegen, Performance/Elit
 
 - Feedback klant (31 okt) verwerkt: ISPO-datum 4–5 november; Products-menu toont de lijnen (Essential, Performance, Elite, MMA Gloves, Accessories); per lijn een webshop-raster met filters; elke product een eigen pagina met naam + artikelnummer; 30+ customised products; productiestappen (cutting, moulding…) verwijderd; "Together we rise" op zwarte achtergrond.
 
+- Derde levering (30 okt) verwerkt: Performance-lijn (Apex, Top King, Twins) in Gloves en Protective; fabrieksfilm op homepage (korte loop) en Factory-pagina (volledige film met geluid via afspeelknop). Fightwear & Accessories weer één categorie; header: Gloves, Protective Equipment, Coaching Equipment, Fightwear & Accessories, Company.
+
 **Nog te doen / aanleveren:**
 1. Google Calendar *Appointment schedule* aanmaken → link in `src/data/site.ts` (`BOOKING_URL`). Nu opent een vooringevulde agenda-afspraak; die meldt de afspraak niet bij jullie.
 2. ~~Logo~~ ✔ verwerkt (gevectoriseerd naar SVG: `src/assets/brand/`, losse bestanden in `public/brand/`, favicon).
 3. Domein → `site` in `astro.config.mjs`; zakelijke e-mail → `EMAIL` in `src/data/site.ts`.
 4. Portretten Bart & Jan → `public/images/team/`, pad invullen in `src/components/PeopleCards.astro`.
-5. Foto's Performance-lijn, kledingstukken (fightwear), fabrieksvideo.
+5. Performance coaching-materiaal, kledingstukken (fightwear), portretten Bart & Jan.
 6. Productnamen: voorlopig de mapnamen van de klant (Aiba, AD, RDX, Venum). Let op: RDX en Venum zijn merknamen van derden — vóór livegang definitieve namen bevestigen.
 7. Hosting (Vercel/Netlify) + livegang.
 8. **Echte artikelnummers.** Nu tijdelijke nummers volgens patroon `TG-<lijn>-<type>-<nr>` (bijv. `TG-ESS-BG-01`), gegenereerd in `src/data/shop.ts`.

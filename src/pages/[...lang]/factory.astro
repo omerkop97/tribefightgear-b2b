@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import Process from '../../components/Process.astro';
+import FactoryVideo from '../../components/FactoryVideo.astro';
 import FinalCta from '../../components/sections/FinalCta.astro';
 import Icon from '../../components/Icon.astro';
 import { whatsappUrl } from '../../data/site';
@@ -21,10 +22,7 @@ const d = t(lang);
         <p class="lead" data-reveal>{d.factory.body}</p>
         <div data-reveal><a class="btn btn--primary" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener">{d.factory.cta} <Icon name="arrow" /></a></div>
       </div>
-      <div class="fac__media stage grain" data-clip>
-        <!-- Factory video goes here: <video autoplay muted loop playsinline src="/video/factory.mp4"> -->
-        <div class="fac__ph"><span class="fac__play"><Icon name="play" /></span>{d.factory.video}</div>
-      </div>
+      <FactoryVideo lang={lang} />
     </div>
     <div class="container">
       <Process lang={lang} />
@@ -47,10 +45,6 @@ const d = t(lang);
 <style>
   .fac { display: grid; gap: 40px; align-items: center; }
   .fac__copy { display: grid; gap: 24px; justify-items: start; }
-  .fac__media { aspect-ratio: 16 / 10; display: grid; place-items: center; }
-  .fac__ph { position: relative; z-index: 2; display: grid; justify-items: center; gap: 16px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); }
-  .fac__play { width: 84px; height: 84px; border-radius: 50%; background: var(--accent-fill); color: var(--on-accent); display: grid; place-items: center; box-shadow: 0 0 0 12px var(--accent-soft); }
-  .fac__play :global(svg) { width: 30px; height: 30px; margin-left: 4px; }
   @media (min-width: 1024px) { .fac { grid-template-columns: 1fr 1.15fr; gap: 72px; } }
   .quality { border-top: 1px solid var(--line); background: var(--bg-2); }
   .q { display: grid; gap: 20px; }

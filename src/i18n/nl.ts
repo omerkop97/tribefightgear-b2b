@@ -38,7 +38,7 @@ export const nl: typeof en = {
   trust: [
     { count: 30, suffix: '+', label: 'Producten op maat' },
     { count: 20, suffix: '+', label: 'Jaar ervaring in vechtsport' },
-    { count: 20, suffix: '+', label: 'Jaar productie-ervaring' },
+    { count: 12, suffix: '+', label: 'Jaar productie-ervaring' },
     { text: 'EU', label: 'Europese markt, lokale ondersteuning' },
   ],
   ispo: {
@@ -94,7 +94,7 @@ export const nl: typeof en = {
     title: ['Vakmensen.', 'Serieuze capaciteit.'],
     body:
       'Premium fight equipment vraagt om vakkundige handen, gestructureerde productie en constante kwaliteit. Gebouwd om met je merk mee te groeien, van eerste runs tot productie op grote volumes.',
-    video: 'Fabrieksfilm volgt binnenkort',
+    watch: 'Bekijk de film',
     steps: ['Snijden', 'Vormen', 'Stikken', 'Branding', 'Assemblage', 'Kwaliteitscontrole', 'Verpakken', 'Magazijn'],
     cta: 'Bespreek capaciteit',
   },
@@ -192,6 +192,14 @@ export const nl: typeof en = {
     requestMsg: 'Hoi Tribe Gear, ik heb interesse in {title} (art.nr. {sku}) voor mijn merk.',
     comingTitle: 'Te zien op ISPO 2026',
     viewLine: 'Bekijk lijn',
+    viewAll: 'Bekijk alle',
+    colour: 'Kleur',
+    closure: 'Sluiting',
+    alsoIn: 'Ook verkrijgbaar in',
+    company: 'Bedrijf',
+    stripTitle: 'Ontwikkel dit voor jouw merk',
+    stripLine: 'Ontwikkel {name} voor jouw merk',
+    stripBody: 'Vertel ons over je merk, aantallen en planning. We reageren persoonlijk.',
   },
   pages: {
     build: { title: 'OEM, ODM & Private Label', body: 'Drie routes naar je eigen fight gear, allemaal met dezelfde productiestandaard.' },

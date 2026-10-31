@@ -1,0 +1,31 @@
+---
+/** Compact closing call-to-action for listing and product pages. */
+import Icon from './Icon.astro';
+import { BOOKING_URL, whatsappUrl } from '../data/site';
+import { t, type Lang } from '../i18n';
+
+interface Props { lang: Lang; title?: string; }
+const { lang, title } = Astro.props;
+const d = t(lang);
+---
+<section class="strip">
+  <div class="container strip__inner" data-reveal>
+    <div class="strip__copy">
+      <h2 class="strip__title">{title ?? d.shop.stripTitle}</h2>
+      <p class="muted">{d.shop.stripBody}</p>
+    </div>
+    <div class="strip__ctas">
+      <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+      <a class="btn btn--ghost btn--wa" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener"><Icon name="whatsapp" class="wa" /> {d.cta.whatsapp}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .strip { border-top: 1px solid var(--line); background: linear-gradient(90deg, var(--accent-soft), transparent 70%); }
+  .strip__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 48px; padding-block: clamp(40px, 5vw, 64px); }
+  .strip__copy { display: grid; gap: 8px; max-width: 640px; }
+  .strip__title { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; }
+  .strip__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  @media (max-width: 520px) { .strip__ctas .btn { width: 100%; } }
+</style>

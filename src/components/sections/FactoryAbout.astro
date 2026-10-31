@@ -1,6 +1,7 @@
 ---
 import Icon from '../Icon.astro';
 import PeopleCards from '../PeopleCards.astro';
+import FactoryVideo from '../FactoryVideo.astro';
 import { whatsappUrl } from '../../data/site';
 import { localePath, t, type Lang } from '../../i18n';
 
@@ -18,13 +19,7 @@ const d = t(lang);
           <a class="btn btn--primary" href={whatsappUrl(d.cta.whatsappMsg)} target="_blank" rel="noopener">{d.factory.cta} <Icon name="arrow" /></a>
         </div>
       </div>
-      <div class="fa__media stage grain" data-clip>
-        <!-- Factory video goes here: <video autoplay muted loop playsinline src="/video/factory.mp4"> -->
-        <div class="fa__placeholder">
-          <span class="fa__play"><Icon name="play" /></span>
-          <span>{d.factory.video}</span>
-        </div>
-      </div>
+      <FactoryVideo lang={lang} />
     </div>
 
     <div class="fa__statement" aria-hidden="true">
@@ -46,10 +41,6 @@ const d = t(lang);
 <style>
   .fa__factory { display: grid; gap: 40px; align-items: center; }
   .fa__copy { display: grid; gap: 24px; justify-items: start; }
-  .fa__media { aspect-ratio: 16 / 10; display: grid; place-items: center; }
-  .fa__placeholder { position: relative; z-index: 2; display: grid; justify-items: center; gap: 16px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); }
-  .fa__play { width: 84px; height: 84px; border-radius: 50%; background: var(--accent-fill); color: var(--on-accent); display: grid; place-items: center; box-shadow: 0 0 0 12px var(--accent-soft); }
-  .fa__play :global(svg) { width: 30px; height: 30px; margin-left: 4px; }
   .fa__statement {
     margin-block: clamp(72px, 10vw, 140px);
     font-family: var(--font-display); font-weight: 800; text-transform: uppercase;

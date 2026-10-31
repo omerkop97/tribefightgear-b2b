@@ -13,8 +13,14 @@ export interface Model {
   type: L;
   /** Only shown when the client specified it. */
   material?: L;
-  images: number; // number of angles in /public/images/products/<category>/<slug>/
+  images: number;
+  /** Colourways: each becomes its own product, using these photo numbers. */
+  colours?: Colourway[]; // number of angles in /public/images/products/<category>/<slug>/
 }
+
+export interface Colour { code: string; name: L }
+export interface Closure { code: string; name: L; title: L }
+export interface Colourway { colour: Colour; images: number[]; closure?: Closure }
 
 export interface Tier {
   id: TierId;
@@ -44,6 +50,19 @@ export interface Category {
 const PU: L = { en: 'Premium PU', nl: 'Premium PU' };
 const LEATHER: L = { en: 'Leather', nl: 'Leer' };
 const MICRO: L = { en: 'Microfibre', nl: 'Microfiber' };
+
+const BW: Colour = { code: 'BKW', name: { en: 'Black / White', nl: 'Zwart / Wit' } };
+const BLK: Colour = { code: 'BLK', name: { en: 'Black', nl: 'Zwart' } };
+const BGR: Colour = { code: 'BKG', name: { en: 'Black / Grey', nl: 'Zwart / Grijs' } };
+const BGD: Colour = { code: 'BKD', name: { en: 'Black / Gold', nl: 'Zwart / Goud' } };
+const BGN: Colour = { code: 'BKN', name: { en: 'Black / Green', nl: 'Zwart / Groen' } };
+const WG: Colour = { code: 'WGD', name: { en: 'White / Gold', nl: 'Wit / Goud' } };
+const WHT: Colour = { code: 'WHT', name: { en: 'White', nl: 'Wit' } };
+const GRN: Colour = { code: 'GRN', name: { en: 'Green', nl: 'Groen' } };
+const GGD: Colour = { code: 'GGD', name: { en: 'Green / Gold', nl: 'Groen / Goud' } };
+
+const LACE: Closure = { code: 'L', name: { en: 'Lace-up', nl: 'Veters' }, title: { en: 'Lace-up', nl: 'met veters' } };
+const VELCRO: Closure = { code: 'V', name: { en: 'Hook & loop', nl: 'Klittenband' }, title: { en: 'Velcro', nl: 'met klittenband' } };
 
 const BOXING: L = { en: 'Boxing gloves', nl: 'Bokshandschoenen' };
 const HEAD: L = { en: 'Head guards', nl: 'Hoofdbeschermers' };
@@ -96,25 +115,25 @@ export const CATEGORIES: Category[] = [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala', name: 'Aiba', type: BOXING, material: PU, images: 6 },
-          { slug: 'dotline', name: 'AD', type: BOXING, material: PU, images: 6 },
-          { slug: 'warrior', name: 'RDX', type: BOXING, material: PU, images: 6 },
+          { slug: 'mandala', name: 'Aiba', type: BOXING, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'dotline', name: 'AD', type: BOXING, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'warrior', name: 'RDX', type: BOXING, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
         ],
       },
       {
         id: 'performance',
-        models: [],
-        planned: {
-          en: 'Leather pro-fight and Muay Thai models, on display at ISPO 2026.',
-          nl: 'Leren pro-fight- en Muay Thai-modellen, te zien op ISPO 2026.',
-        },
+        models: [
+          { slug: 'performance-apex', name: 'Apex', type: BOXING, images: 9, colours: [{ colour: BLK, images: [1, 2, 3], closure: LACE }, { colour: BLK, images: [4, 5, 6], closure: VELCRO }, { colour: WG, images: [7, 8, 9], closure: LACE }] },
+          { slug: 'top-king', name: 'Top King', type: BOXING, material: LEATHER, images: 6, colours: [{ colour: BGD, images: [1, 2, 3] }, { colour: GGD, images: [4, 5, 6] }] },
+          { slug: 'twins', name: 'Twins', type: BOXING, material: LEATHER, images: 3, colours: [{ colour: BGN, images: [1, 2, 3] }] },
+        ],
       },
       {
         id: 'elite',
         models: [
-          { slug: 'apex', name: 'Apex', type: BOXING, material: LEATHER, images: 3 },
-          { slug: 'glory', name: 'Glory', type: BOXING, material: MICRO, images: 3 },
-          { slug: 'fly', name: 'Fly', type: BOXING, material: MICRO, images: 3 },
+          { slug: 'apex', name: 'Apex', type: BOXING, material: LEATHER, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory', name: 'Glory', type: BOXING, material: MICRO, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly', name: 'Fly', type: BOXING, material: MICRO, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
         ],
       },
     ],
@@ -126,7 +145,7 @@ export const CATEGORIES: Category[] = [
           en: 'Open-finger MMA gloves in three colourways, with the same construction quality as our boxing gloves.',
           nl: 'MMA-handschoenen met open vingers in drie kleurstellingen, met dezelfde bouwkwaliteit als onze bokshandschoenen.',
         },
-        models: [{ slug: 'mma-hybrid', name: 'Venum', type: { en: 'MMA gloves', nl: 'MMA-handschoenen' }, images: 9 }],
+        models: [{ slug: 'mma-hybrid', name: 'Venum', type: { en: 'MMA gloves', nl: 'MMA-handschoenen' }, images: 9, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }, { colour: WG, images: [7, 8, 9] }] }],
       },
     ],
   },
@@ -146,24 +165,34 @@ export const CATEGORIES: Category[] = [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala-headguard', name: 'Aiba', type: HEAD, material: PU, images: 6 },
-          { slug: 'dotline-headguard', name: 'AD', type: HEAD, material: PU, images: 6 },
-          { slug: 'warrior-headguard', name: 'RDX', type: HEAD, material: PU, images: 6 },
-          { slug: 'mandala-shinguard', name: 'Aiba', type: SHIN, material: PU, images: 6 },
-          { slug: 'dotline-shinguard', name: 'AD', type: SHIN, material: PU, images: 6 },
-          { slug: 'warrior-shinguard', name: 'RDX', type: SHIN, material: PU, images: 6 },
+          { slug: 'mandala-headguard', name: 'Aiba', type: HEAD, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'dotline-headguard', name: 'AD', type: HEAD, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'warrior-headguard', name: 'RDX', type: HEAD, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
+          { slug: 'mandala-shinguard', name: 'Aiba', type: SHIN, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'dotline-shinguard', name: 'AD', type: SHIN, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'warrior-shinguard', name: 'RDX', type: SHIN, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
         ],
       },
-      { id: 'performance', models: [], planned: { en: 'Performance protection, presented at ISPO 2026.', nl: 'Performance-bescherming, gepresenteerd op ISPO 2026.' } },
+      {
+        id: 'performance',
+        models: [
+          { slug: 'performance-apex-headguard', name: 'Apex', type: HEAD, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: WG, images: [4, 5, 6] }] },
+          { slug: 'top-king-headguard', name: 'Top King', type: HEAD, images: 6, colours: [{ colour: BGD, images: [1, 2, 3] }, { colour: GGD, images: [4, 5, 6] }] },
+          { slug: 'twins-headguard', name: 'Twins', type: HEAD, images: 3, colours: [{ colour: GRN, images: [1, 2, 3] }] },
+          { slug: 'performance-apex-shinguard', name: 'Apex', type: SHIN, images: 3, colours: [{ colour: BLK, images: [1, 2, 3] }] },
+          { slug: 'top-king-shinguard', name: 'Top King', type: SHIN, images: 8, colours: [{ colour: BGD, images: [1, 2, 3, 4] }, { colour: GGD, images: [5, 6, 7, 8] }] },
+          { slug: 'twins-shinguard', name: 'Twins', type: SHIN, images: 3, colours: [{ colour: GRN, images: [1, 2, 3] }] },
+        ],
+      },
       {
         id: 'elite',
         models: [
-          { slug: 'apex-headguard', name: 'Apex', type: HEAD, images: 3 },
-          { slug: 'glory-headguard', name: 'Glory', type: HEAD, images: 4 },
-          { slug: 'fly-headguard', name: 'Fly', type: HEAD, images: 1 },
-          { slug: 'apex-shinguard', name: 'Apex', type: SHIN, images: 3 },
-          { slug: 'glory-shinguard', name: 'Glory', type: SHIN, images: 3 },
-          { slug: 'fly-shinguard', name: 'Fly', type: SHIN, images: 4 },
+          { slug: 'apex-headguard', name: 'Apex', type: HEAD, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-headguard', name: 'Glory', type: HEAD, images: 4, colours: [{ colour: WG, images: [1, 2, 3, 4] }] },
+          { slug: 'fly-headguard', name: 'Fly', type: HEAD, images: 1, colours: [{ colour: WG, images: [1] }] },
+          { slug: 'apex-shinguard', name: 'Apex', type: SHIN, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-shinguard', name: 'Glory', type: SHIN, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly-shinguard', name: 'Fly', type: SHIN, images: 4, colours: [{ colour: WG, images: [1, 2, 3, 4] }] },
         ],
       },
     ],
@@ -184,22 +213,22 @@ export const CATEGORIES: Category[] = [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala-focus-pads', name: 'Aiba', type: FOCUS, material: PU, images: 6 },
-          { slug: 'warrior-focus-pads', name: 'RDX', type: FOCUS, material: PU, images: 2 },
+          { slug: 'mandala-focus-pads', name: 'Aiba', type: FOCUS, material: PU, images: 6, colours: [{ colour: BW, images: [1, 3, 4] }, { colour: BLK, images: [2, 5, 6] }] },
+          { slug: 'warrior-focus-pads', name: 'RDX', type: FOCUS, material: PU, images: 2, colours: [{ colour: BW, images: [1, 2] }] },
         ],
       },
       { id: 'performance', models: [], planned: { en: 'Performance coaching line, presented at ISPO 2026.', nl: 'Performance-trainersmateriaal, gepresenteerd op ISPO 2026.' } },
       {
         id: 'elite',
         models: [
-          { slug: 'glory-focus-long', name: 'Glory Long', type: FOCUS, images: 3 },
-          { slug: 'glory-focus-short', name: 'Glory Short', type: FOCUS, images: 3 },
-          { slug: 'glory-focus-mini', name: 'Glory Mini', type: FOCUS, images: 3 },
-          { slug: 'fly-focus-pads', name: 'Fly', type: FOCUS, images: 3 },
-          { slug: 'apex-arm-pads', name: 'Apex', type: ARM, images: 3 },
-          { slug: 'glory-arm-pads', name: 'Glory', type: ARM, images: 3 },
-          { slug: 'fly-arm-pads', name: 'Fly', type: ARM, images: 3 },
-          { slug: 'glory-belly-pads', name: 'Glory', type: BELLY, images: 3 },
+          { slug: 'glory-focus-long', name: 'Glory Long', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-focus-short', name: 'Glory Short', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-focus-mini', name: 'Glory Mini', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly-focus-pads', name: 'Fly', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'apex-arm-pads', name: 'Apex', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-arm-pads', name: 'Glory', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly-arm-pads', name: 'Fly', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-belly-pads', name: 'Glory', type: BELLY, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
         ],
       },
     ],
@@ -212,8 +241,8 @@ export const CATEGORIES: Category[] = [
       nl: 'Speedballs, scheen-wreefbeschermers, toks en boksschoenen.',
     },
     intro: {
-      en: 'Complete the collection: accessories in the same design language as your equipment.',
-      nl: 'Maak de collectie compleet: accessoires in dezelfde designtaal als je materiaal.',
+      en: 'Complete the collection: fightwear and accessories in the same design language as your equipment, in the Tribe Gear black and white-gold lines.',
+      nl: 'Maak de collectie compleet: fightwear en accessoires in dezelfde designtaal als je materiaal, in de zwarte en wit-gouden Tribe Gear-lijnen.',
     },
     cover: 'boxing-shoes',
     tiers: [],
@@ -226,11 +255,20 @@ export const CATEGORIES: Category[] = [
           nl: 'Trainings- en wedstrijdaccessoires, beschikbaar in de zwarte en wit-gouden Tribe Gear-lijnen.',
         },
         models: [
-          { slug: 'speedball', name: 'Speedball', type: { en: 'Speedballs', nl: 'Speedballs' }, images: 6 },
-          { slug: 'shin-instep', name: 'Shin In Step', type: { en: 'Shin instep guards', nl: 'Scheen-wreefbeschermers' }, images: 5 },
-          { slug: 'groin-guard', name: 'Groin Guard', type: { en: 'Groin guards', nl: 'Toks' }, images: 2 },
-          { slug: 'boxing-shoes', name: 'Boxing Shoes', type: { en: 'Boxing shoes', nl: 'Boksschoenen' }, images: 5 },
+          { slug: 'speedball', name: 'Speedball', type: { en: 'Speedballs', nl: 'Speedballs' }, images: 6, colours: [{ colour: WG, images: [1, 2] }, { colour: BLK, images: [3, 4, 5, 6] }] },
+          { slug: 'shin-instep', name: 'Shin In Step', type: { en: 'Shin instep guards', nl: 'Scheen-wreefbeschermers' }, images: 5, colours: [{ colour: BLK, images: [1] }, { colour: BW, images: [2, 4] }, { colour: WHT, images: [3, 5] }] },
+          { slug: 'groin-guard', name: 'Groin Guard', type: { en: 'Groin guards', nl: 'Toks' }, images: 2, colours: [{ colour: BLK, images: [1, 2] }] },
+          { slug: 'boxing-shoes', name: 'Boxing Shoes', type: { en: 'Boxing shoes', nl: 'Boksschoenen' }, images: 5, colours: [{ colour: WG, images: [1, 2, 3, 4, 5] }] },
         ],
+      },
+      {
+        id: 'apparel',
+        name: { en: 'Fightwear', nl: 'Fightwear' },
+        intro: {
+          en: 'Fightwear in the same design language as your equipment, presented at ISPO 2026.',
+          nl: 'Fightwear in dezelfde designtaal als je materiaal, gepresenteerd op ISPO 2026.',
+        },
+        models: [],
       },
     ],
   },

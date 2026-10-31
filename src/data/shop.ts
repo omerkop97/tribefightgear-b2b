@@ -4,11 +4,11 @@
  * The source data stays in products.ts, organised like the client's photo folders.
  */
 import type { Lang } from '../i18n';
-import { CATEGORIES, TIERS, type CategoryId, type Model } from './products';
+import { CATEGORIES, TIERS, type CategoryId, type Closure, type Colour, type Model } from './products';
 
 type L = Record<Lang, string>;
 
-export type LineId = 'essential' | 'performance' | 'elite' | 'mma' | 'accessories';
+export type LineId = 'essential' | 'performance' | 'elite' | 'mma' | 'accessories' | 'apparel';
 
 export interface Line {
   id: LineId;
@@ -25,8 +25,14 @@ export interface Product extends Model {
   line: LineId;
   category: CategoryId;
   title: L;
+  colour: Colour;
+  closure?: Closure;
+  /** Photo numbers of this colourway inside the model folder. */
+  photos: number[];
+  /** Key shared by all colourways of the same model (for "also available in"). */
+  family: string;
   /**
-   * TODO: placeholder article numbers (TG-<line>-<type>-<nn>).
+   * TODO: placeholder article numbers (TG-<line>-<type>-<nn>-<colour>).
    * Replace with the client's real article numbers once delivered.
    */
   sku: string;
@@ -65,9 +71,22 @@ export const LINES: Line[] = [
       nl: 'Speedballs, scheen-wreefbeschermers, toks en boksschoenen in de zwarte en wit-gouden Tribe Gear-lijnen.',
     },
   },
+  {
+    id: 'apparel',
+    name: { en: 'Fightwear', nl: 'Fightwear' },
+    tagline: { en: 'Wear the brand', nl: 'Draag het merk' },
+    body: {
+      en: 'Fightwear in the same design language as your equipment.',
+      nl: 'Fightwear in dezelfde designtaal als je materiaal.',
+    },
+    comingSoon: {
+      en: 'The fightwear collection is presented at ISPO 2026. Book a meeting to see it first.',
+      nl: 'De fightwear-collectie wordt gepresenteerd op ISPO 2026. Plan een afspraak om hem als eerste te zien.',
+    },
+  },
 ];
 
-const LINE_CODE: Record<LineId, string> = { essential: 'ESS', performance: 'PRF', elite: 'ELT', mma: 'MMA', accessories: 'ACC' };
+const LINE_CODE: Record<LineId, string> = { essential: 'ESS', performance: 'PRF', elite: 'ELT', mma: 'MMA', accessories: 'ACC', apparel: 'APP' };
 const TYPE_CODE: Record<string, string> = {
   'Boxing gloves': 'BG',
   'MMA gloves': 'MG',
@@ -93,14 +112,30 @@ function buildProducts(): Product[] {
     const key = `${line}-${m.type.en}`;
     const n = (counters.get(key) ?? 0) + 1;
     counters.set(key, n);
-    out.push({
-      ...m,
-      id: isAccessory ? slugify(m.name) : `${slugify(m.name)}-${slugify(m.type.en)}`,
-      line,
-      category,
-      title: isAccessory ? same(m.name) : { en: `${m.name} ${titleCase(m.type.en)}`, nl: `${m.name} ${m.type.nl}` },
-      sku: `TG-${LINE_CODE[line]}-${TYPE_CODE[m.type.en] ?? 'XX'}-${String(n).padStart(2, '0')}`,
-    });
+    const base = isAccessory ? slugify(m.name) : `${slugify(m.name)}-${slugify(m.type.en)}`;
+    // Apex exists in both Performance and Elite: the later line gets its name in the URL.
+    const taken = out.some((x) => x.category === category && x.family !== `${line}-${m.slug}` && x.id.startsWith(`${base}-`));
+    const stem = taken ? `${line}-${base}` : base;
+    const colourways = m.colours ?? [];
+    for (const cw of colourways) {
+      out.push({
+        ...m,
+        images: cw.images.length,
+        photos: cw.images,
+        colour: cw.colour,
+        closure: cw.closure,
+        family: `${line}-${m.slug}`,
+        id: `${stem}-${slugify(cw.colour.name.en)}${cw.closure ? `-${slugify(cw.closure.name.en)}` : ''}`,
+        line,
+        category,
+        title: isAccessory
+          ? same(m.name)
+          : cw.closure
+            ? { en: `${m.name} ${cw.closure.title.en} ${titleCase(m.type.en)}`, nl: `${m.name} ${m.type.nl} ${cw.closure.title.nl}` }
+            : { en: `${m.name} ${titleCase(m.type.en)}`, nl: `${m.name} ${m.type.nl}` },
+        sku: `TG-${LINE_CODE[line]}-${TYPE_CODE[m.type.en] ?? 'XX'}-${String(n).padStart(2, '0')}-${cw.colour.code}${cw.closure ? `-${cw.closure.code}` : ''}`,
+      });
+    }
   };
   for (const c of CATEGORIES) {
     for (const tier of c.tiers) for (const m of tier.models) add(m, tier.id, c.id);
@@ -122,3 +157,34 @@ export function productsInLine(id: LineId) {
 export function productsInCategory(id: CategoryId) {
   return PRODUCTS.filter((p) => p.category === id);
 }
+
+/** Lines offered within a category, in the order of LINES (levels first, then collections). */
+export function linesInCategory(id: CategoryId): Line[] {
+  const c = CATEGORIES.find((x) => x.id === id)!;
+  const ids = new Set<string>([...c.tiers.map((t) => t.id), ...(c.collections ?? []).map((col) => col.id)]);
+  return LINES.filter((l) => ids.has(l.id));
+}
+
+export function productsIn(category: CategoryId, line: LineId) {
+  return PRODUCTS.filter((p) => p.category === category && p.line === line);
+}
+
+/** /products/<category>/<product> */
+export function productPath(p: Product) {
+  return `/products/${p.category}/${p.id}`;
+}
+
+/** Other colourways of the same model. */
+export function siblings(p: Product) {
+  return PRODUCTS.filter((x) => x.family === p.family && x !== p);
+}
+
+/** URL of photo `n` (1-based position within the colourway) of a product. */
+export function photo(p: Product, n: number, size: 700 | 1400 = 1400) {
+  return `/images/products/${p.category}/${p.slug}/${p.photos[n - 1]}-${size}.webp`;
+}
+
+export function photoSrcset(p: Product, n: number) {
+  return `${photo(p, n, 700)} 700w, ${photo(p, n, 1400)} 1400w`;
+}
+

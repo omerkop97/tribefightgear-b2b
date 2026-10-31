@@ -1,0 +1,140 @@
+---
+/** Webshop-style listing: a category (all lines) or one line within a category. */
+import Base from '../layouts/Base.astro';
+import Icon from './Icon.astro';
+import ProductGrid from './ProductGrid.astro';
+import CtaStrip from './CtaStrip.astro';
+import { CATEGORIES, type CategoryId } from '../data/products';
+import { linesInCategory, photo, photoSrcset, productsIn, productsInCategory, type Line } from '../data/shop';
+import { BOOKING_URL } from '../data/site';
+import { localePath, t, type Lang } from '../i18n';
+
+interface Props { lang: Lang; category: CategoryId; line?: Line; }
+const { lang, category: catId, line } = Astro.props;
+const d = t(lang);
+const category = CATEGORIES.find((c) => c.id === catId)!;
+const lines = linesInCategory(catId);
+const products = line ? productsIn(catId, line.id) : productsInCategory(catId);
+const path = line ? `/products/${catId}/${line.id}` : `/products/${catId}`;
+
+// Levels read as "Essential Gloves" in the browser title; the page itself shows the short name.
+const isLevel = line && ['essential', 'performance', 'elite'].includes(line.id);
+const pageTitle = line ? (isLevel ? `${line.name[lang]} ${category.name[lang]}` : line.name[lang]) : category.name[lang];
+const heading = line ? line.name[lang] : category.name[lang];
+const eyebrow = line ? category.name[lang] : d.categories.eyebrow;
+const body = line ? line.body[lang] : category.intro[lang];
+const tagline = line?.tagline[lang];
+
+const typeOptions = [...new Map(products.map((p) => [p.type.en, { value: p.type.en, label: p.type[lang] }])).values()];
+// The line tabs already split by line, so the chips filter by product type (head guards / shin pads…).
+const filters = { key: 'type' as const, options: typeOptions };
+
+const crumbs = [{ label: 'Home', href: localePath(lang, '/') }];
+if (line) crumbs.push({ label: category.name[lang], href: localePath(lang, `/products/${catId}`) });
+
+// Featured product on the right of the header: first of the line, or the category cover.
+const feature = products.find((p) => p.slug === category.cover) ?? products[0];
+const comingSoon = line?.comingSoon?.[lang] ?? (products.length === 0 ? category.intro[lang] : undefined);
+---
+<Base lang={lang} path={path} title={pageTitle} description={body}>
+  <div class:list={['listing', line && `listing--${line.id}`]}>
+    <section class="lh">
+      <div class="container lh__grid">
+        <div class="lh__copy">
+          <nav class="lh__crumbs" aria-label="Breadcrumb">
+            {crumbs.map((c) => <><a href={c.href}>{c.label}</a><span>/</span></>)}
+            <span aria-current="page">{pageTitle}</span>
+          </nav>
+          <span class="eyebrow">{eyebrow}</span>
+          <h1 class="lh__title" data-split="load">{heading}</h1>
+          {tagline && <p class="lh__tagline">{tagline}</p>}
+          <p class="lh__body">{body}</p>
+        </div>
+        {feature && (
+          <div class="lh__visual" aria-hidden="true">
+            <div class="lh__glow"></div>
+            <img class="lh__img" src={photo(feature, 1, 1400)} srcset={photoSrcset(feature, 1)} sizes="(min-width: 900px) 34vw, 0px" alt="" width="1400" height="1400" fetchpriority="high" />
+          </div>
+        )}
+      </div>
+
+      {lines.length > 1 && (
+        <nav class="lt" aria-label={d.shop.lines}>
+          <div class="container lt__inner">
+            <a href={localePath(lang, `/products/${catId}`)} class:list={['lt__tab', { 'is-active': !line }]}>{d.shop.all}</a>
+            {lines.map((l) => (
+              <a href={localePath(lang, `/products/${catId}/${l.id}`)} class:list={['lt__tab', `lt__tab--${l.id}`, { 'is-active': line?.id === l.id }]}>
+                {l.name[lang]}
+                {productsIn(catId, l.id).length === 0 && <small>ISPO</small>}
+              </a>
+            ))}
+          </div>
+        </nav>
+      )}
+    </section>
+
+    <section class="list-body">
+      <div class="container">
+        {products.length > 0 ? (
+          <ProductGrid products={products} lang={lang} filters={filters} />
+        ) : (
+          <div class="soon" data-reveal>
+            <span class="eyebrow">ISPO 2026 · Stand 2E30</span>
+            <h2 class="display-m">{d.shop.comingTitle}</h2>
+            {comingSoon && <p class="lead">{comingSoon}</p>}
+            <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <CtaStrip lang={lang} title={d.shop.stripLine.replace('{name}', pageTitle)} />
+  </div>
+</Base>
+
+<style>
+  /* Elite: sand/gold accents instead of green */
+  .listing--elite {
+    --accent: var(--sand);
+    --accent-soft: rgba(185, 167, 116, 0.12);
+    --accent-fill: #8a7a4c;
+    --accent-hover: #a08e5c;
+  }
+
+  /* Compact header */
+  .lh { position: relative; border-bottom: 1px solid var(--line); overflow: hidden; isolation: isolate; }
+  .lh__grid { display: grid; align-items: center; gap: 24px; min-height: clamp(300px, 44vh, 480px); padding-block: clamp(28px, 4vw, 48px); }
+  .lh__copy { display: grid; gap: 16px; justify-items: start; max-width: 620px; }
+  .lh__crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; color: var(--ink-3); }
+  .lh__crumbs a:hover { color: var(--accent); }
+  .lh__title { font-size: clamp(3rem, 7vw, 6.4rem); font-weight: 800; line-height: 0.9; }
+  .lh__tagline { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+  .lh__body { color: var(--ink-2); font-size: 1.05rem; max-width: 52ch; }
+  .lh__visual { position: relative; display: none; place-items: center; height: 100%; }
+  .lh__glow { position: absolute; inset: 0; background: radial-gradient(circle at 50% 55%, var(--accent-soft) 0%, transparent 62%); transform: scale(1.4); }
+  .lh__img { position: relative; width: min(100%, 440px); height: auto; max-height: 40vh; object-fit: contain; filter: drop-shadow(0 40px 50px rgba(0, 0, 0, 0.55)); animation: lhIn 1.3s var(--ease) both 0.15s; }
+  @keyframes lhIn { from { opacity: 0; transform: translateX(40px) scale(0.94) rotate(4deg); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .lh__img { animation: none; } }
+  @media (min-width: 900px) {
+    .lh__grid { grid-template-columns: 1.2fr 1fr; }
+    .lh__visual { display: grid; }
+  }
+
+  /* Line tabs */
+  .lt { border-top: 1px solid var(--line); }
+  .lt__inner { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .lt__tab {
+    position: relative; display: inline-flex; align-items: baseline; gap: 8px; padding: 18px 18px 16px; white-space: nowrap;
+    font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+    transition: color 0.25s;
+  }
+  .lt__tab small { font-size: 0.68rem; letter-spacing: 0.12em; color: var(--ink-3); font-weight: 600; }
+  .lt__tab::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: -1px; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.45s var(--ease); }
+  .lt__tab:hover, .lt__tab.is-active { color: var(--ink); }
+  .lt__tab:hover::after, .lt__tab.is-active::after { transform: scaleX(1); }
+  .lt__tab--elite { color: color-mix(in srgb, var(--sand) 70%, transparent); }
+  .lt__tab--elite::after { background: var(--sand); }
+
+  .list-body { padding-block: clamp(28px, 4vw, 48px) clamp(64px, 8vw, 104px); }
+  .soon { display: grid; gap: 20px; justify-items: start; padding: clamp(32px, 5vw, 64px); border: 1.5px dashed var(--line-strong); }
+</style>

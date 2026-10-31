@@ -1,48 +1,42 @@
 ---
-import Base from '../../../../layouts/Base.astro';
-import Icon from '../../../../components/Icon.astro';
-import Lightbox from '../../../../components/Lightbox.astro';
-import Customise from '../../../../components/Customise.astro';
-import ProductCard from '../../../../components/ProductCard.astro';
-import FinalCta from '../../../../components/sections/FinalCta.astro';
-import { CATEGORIES, img, srcset } from '../../../../data/products';
-import { PRODUCTS, lineById, type Product } from '../../../../data/shop';
-import { BOOKING_URL, whatsappUrl } from '../../../../data/site';
-import { LANGS, DEFAULT_LANG, langFromParam, localePath, t } from '../../../../i18n';
+import Base from '../layouts/Base.astro';
+import Icon from './Icon.astro';
+import Lightbox from './Lightbox.astro';
+import Customise from './Customise.astro';
+import ProductCard from './ProductCard.astro';
+import CtaStrip from './CtaStrip.astro';
+import { CATEGORIES } from '../data/products';
+import { PRODUCTS, lineById, linesInCategory, photo, photoSrcset, productPath, siblings, type Product } from '../data/shop';
+import { BOOKING_URL, whatsappUrl } from '../data/site';
+import { localePath, t, type Lang } from '../i18n';
 
-export function getStaticPaths() {
-  return LANGS.flatMap((lang) =>
-    PRODUCTS.map((product) => ({
-      params: { lang: lang === DEFAULT_LANG ? undefined : lang, line: product.line, product: product.id },
-      props: { product },
-    })),
-  );
-}
-
-const { product: p } = Astro.props as { product: Product };
-const lang = langFromParam(Astro.params.lang);
+interface Props { product: Product; lang: Lang; }
+const { product: p, lang } = Astro.props;
 const d = t(lang);
 const line = lineById(p.line);
 const category = CATEGORIES.find((c) => c.id === p.category)!;
 const title = p.title[lang];
 const angles = Array.from({ length: p.images }, (_, i) => i + 1);
-const ask = whatsappUrl(d.shop.requestMsg.replace('{title}', title).replace('{sku}', p.sku));
+const colour = p.colour.name[lang];
+const others = siblings(p);
+const ask = whatsappUrl(d.shop.requestMsg.replace('{title}', `${title} (${colour})`).replace('{sku}', p.sku));
+const categoryPath = `/products/${p.category}`;
+// A line page exists only when the category has more than one line (Accessories has just one).
+const linePath = linesInCategory(p.category).length > 1 ? `${categoryPath}/${p.line}` : categoryPath;
 
-// Same line first, same category on top, then the rest of the line.
-const related = PRODUCTS.filter((x) => x.line === p.line && x !== p)
-  .sort((a, b) => Number(b.category === p.category) - Number(a.category === p.category))
+// Same category: same line first, then the other lines.
+const related = PRODUCTS.filter((x) => x.category === p.category && x !== p)
+  .sort((a, b) => Number(b.line === p.line) - Number(a.line === p.line))
   .slice(0, 6);
 
-const focusPoints = ['50% 70%', '30% 40%', '62% 30%', '50% 50%', '70% 70%', '40% 25%'];
-const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (i % p.images) + 1, 1400), focus }));
 ---
-<Base lang={lang} path={`/products/${p.line}/${p.id}`} title={`${title} (${p.sku})`} description={`${title}, ${line.name[lang]}. ${line.body[lang]}`}>
+<Base lang={lang} path={productPath(p)} title={`${title} ${colour} (${p.sku})`} description={`${title}, ${line.name[lang]}. ${line.body[lang]}`}>
   <section class="pd">
     <div class="container">
       <nav class="crumbs" aria-label="Breadcrumb">
         <a href={localePath(lang, '/')}>Home</a><span>/</span>
-        <a href={localePath(lang, '/products')}>{d.nav.products}</a><span>/</span>
-        <a href={localePath(lang, `/products/${p.line}`)}>{line.name[lang]}</a><span>/</span>
+        <a href={localePath(lang, categoryPath)}>{category.name[lang]}</a><span>/</span>
+        {linePath !== categoryPath && <><a href={localePath(lang, linePath)}>{line.name[lang]}</a><span>/</span></>}
         <span aria-current="page">{title}</span>
       </nav>
 
@@ -51,8 +45,8 @@ const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (
           <button class="pd__stage stage grain" type="button" data-lightbox-open aria-label={`${d.products.enlarge}: ${title}`}>
             <img
               data-gallery-main
-              src={img(p.category, p.slug, 1, 1400)}
-              srcset={srcset(p.category, p.slug, 1)}
+              src={photo(p, 1, 1400)}
+              srcset={photoSrcset(p, 1)}
               sizes="(min-width: 1024px) 55vw, 92vw"
               alt={title}
               width="1400" height="1400" fetchpriority="high"
@@ -65,13 +59,13 @@ const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (
                 <button
                   type="button"
                   data-gallery-thumb
-                  data-lightbox-item={img(p.category, p.slug, n, 1400)}
-                  data-src={img(p.category, p.slug, n, 1400)}
-                  data-srcset={srcset(p.category, p.slug, n)}
+                  data-lightbox-item={photo(p, n, 1400)}
+                  data-src={photo(p, n, 1400)}
+                  data-srcset={photoSrcset(p, n)}
                   aria-pressed={n === 1 ? 'true' : 'false'}
                   aria-label={`${d.products.view} ${n}`}
                 >
-                  <img src={img(p.category, p.slug, n, 700)} alt="" width="700" height="700" loading="lazy" />
+                  <img src={photo(p, n, 700)} alt="" width="700" height="700" loading="lazy" />
                 </button>
               ))}
             </div>
@@ -79,17 +73,37 @@ const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (
         </div>
 
         <div class="pd__info">
-          <a class:list={['pd__line', `pd__line--${p.line}`]} href={localePath(lang, `/products/${p.line}`)}>{line.name[lang]}</a>
+          <a class:list={['pd__line', `pd__line--${p.line}`]} href={localePath(lang, linePath)}>{line.name[lang]}</a>
           <h1 class="pd__title">{title}</h1>
+          <p class="pd__colour">{colour}</p>
           <p class="pd__sku">{d.shop.sku} {p.sku}</p>
 
           <dl class="pd__specs">
             <div><dt>{d.shop.type}</dt><dd>{p.type[lang]}</dd></div>
-            <div><dt>{d.shop.category}</dt><dd><a href={localePath(lang, `/products/${p.category}`)}>{category.name[lang]}</a></dd></div>
+            <div><dt>{d.shop.category}</dt><dd><a href={localePath(lang, categoryPath)}>{category.name[lang]}</a></dd></div>
             <div><dt>{d.shop.line}</dt><dd>{line.name[lang]}</dd></div>
+            <div><dt>{d.shop.colour}</dt><dd>{colour}</dd></div>
+            {p.closure && <div><dt>{d.shop.closure}</dt><dd>{p.closure.name[lang]}</dd></div>}
             {p.material && <div><dt>{d.products.material}</dt><dd>{p.material[lang]}</dd></div>}
-            <div><dt>{d.shop.angles}</dt><dd>{p.images}</dd></div>
           </dl>
+
+          {others.length > 0 && (
+            <div class="pd__variants">
+              <span class="pd__label">{d.shop.alsoIn}</span>
+              <div class="pd__swatches">
+                <span class="pd__swatch is-current" aria-current="true">
+                  <img src={photo(p, 1, 700)} alt="" width="700" height="700" />
+                  <span>{colour}{p.closure && <><br />{p.closure.name[lang]}</>}</span>
+                </span>
+                {others.map((o) => (
+                  <a class="pd__swatch" href={localePath(lang, productPath(o))}>
+                    <img src={photo(o, 1, 700)} alt="" width="700" height="700" loading="lazy" />
+                    <span>{o.colour.name[lang]}{o.closure && <><br />{o.closure.name[lang]}</>}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div class="pd__opts">
             <span class="pd__label">{d.products.options}</span>
@@ -105,14 +119,14 @@ const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (
     </div>
   </section>
 
-  <Customise lang={lang} closeups={closeups} />
+  <Customise lang={lang} />
 
   {related.length > 0 && (
     <section class="section related">
       <div class="container">
         <div class="related__head">
-          <h2 class="display-m">{d.shop.more} {line.name[lang]}</h2>
-          <a class="link-arrow" href={localePath(lang, `/products/${p.line}`)}>{d.shop.viewLine} <Icon name="arrow" /></a>
+          <h2 class="display-m">{d.shop.more} {category.name[lang]}</h2>
+          <a class="link-arrow" href={localePath(lang, categoryPath)}>{d.shop.viewAll} {category.name[lang]} <Icon name="arrow" /></a>
         </div>
         <div class="related__grid">
           {related.map((r) => <ProductCard product={r} lang={lang} />)}
@@ -121,7 +135,7 @@ const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (
     </section>
   )}
 
-  <FinalCta lang={lang} />
+  <CtaStrip lang={lang} />
   <Lightbox lang={lang} />
 </Base>
 
@@ -152,6 +166,14 @@ const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (
   .pd__line { justify-self: start; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line-strong); color: var(--accent); }
   .pd__line--elite { color: var(--sand); border-color: color-mix(in srgb, var(--sand) 45%, transparent); }
   .pd__title { font-size: clamp(2.6rem, 5vw, 4.4rem); font-weight: 800; }
+  .pd__colour { margin-top: -12px; font-size: 1.15rem; color: var(--ink-2); }
+  .pd__variants { display: grid; gap: 12px; }
+  .pd__swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pd__swatch { display: grid; gap: 6px; width: 104px; text-align: center; font-size: 0.78rem; color: var(--ink-2); }
+  .pd__swatch img { width: 104px; height: 104px; object-fit: contain; padding: 8%; background: var(--stage); border: 1px solid var(--line); transition: border-color 0.25s; }
+  .pd__swatch:hover img { border-color: var(--ink-3); }
+  .pd__swatch.is-current img { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .pd__swatch.is-current { color: var(--ink); }
   .pd__sku { margin-top: -10px; font-size: 0.95rem; letter-spacing: 0.08em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
   .pd__specs { margin: 0; display: grid; border-top: 1px solid var(--line); }
   .pd__specs div { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }

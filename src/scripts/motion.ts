@@ -94,6 +94,17 @@ function initMotion() {
     });
   });
 
+  /* ---------- Grids: reveal row by row as they scroll in ---------- */
+  document.querySelectorAll<HTMLElement>('[data-batch]').forEach((grid) => {
+    const items = Array.from(grid.children) as HTMLElement[];
+    gsap.set(items, { autoAlpha: 0, y: 32 });
+    ScrollTrigger.batch(items, {
+      start: 'top 92%',
+      once: true,
+      onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.8, ease: EASE, stagger: 0.07, overwrite: true }),
+    });
+  });
+
   /* ---------- Clip reveal for imagery ---------- */
   document.querySelectorAll<HTMLElement>('[data-clip]').forEach((el) => {
     gsap.fromTo(el, { clipPath: 'inset(100% 0% 0% 0%)' }, {
@@ -130,15 +141,26 @@ function initMotion() {
   if (hero) {
     const product = hero.querySelector('[data-hero-product]');
     const word = hero.querySelector('[data-hero-word]');
+    const bg = hero.querySelector('[data-hero-bg]');
+    const stage = hero.querySelector('.hero__stage');
     const intro = gsap.timeline({ delay: 0.2 });
-    if (product) intro.fromTo(product, { autoAlpha: 0, scale: 0.86, rotate: -8, y: 60 }, { autoAlpha: 1, scale: 1, rotate: 0, y: 0, duration: 1.6, ease: 'expo.out' }, 0);
+    if (bg) intro.fromTo(bg, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 2.4, ease: 'expo.out' }, 0);
+    if (product) {
+      const showcase = Boolean(stage);
+      intro.fromTo(product, { autoAlpha: 0, scale: 0.86, rotate: showcase ? 0 : -8, y: 60 }, { autoAlpha: 1, scale: 1, rotate: 0, y: 0, duration: 1.6, ease: 'expo.out' }, 0.15);
+    }
     if (word) intro.fromTo(word, { autoAlpha: 0, xPercent: 8 }, { autoAlpha: 1, xPercent: 0, duration: 1.8, ease: 'expo.out' }, 0);
     hero.querySelectorAll('[data-hero-in]').forEach((el, i) => {
       intro.fromTo(el, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 1, ease: EASE }, 0.55 + i * 0.1);
     });
 
     const scrub = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
-    if (product) gsap.to(product, { yPercent: 18, rotate: 9, scale: 1.08, ease: 'none', scrollTrigger: scrub });
+    if (stage) gsap.to(stage, { yPercent: 14, scale: 1.06, ease: 'none', scrollTrigger: scrub });
+    else if (product) gsap.to(product, { yPercent: 18, rotate: 9, scale: 1.08, ease: 'none', scrollTrigger: scrub });
+    // The intro fades the wrapper in; the scroll effect works on the video itself with fixed
+    // start values, so it can never pick up the intro's "invisible" start state.
+    const film = hero.querySelector('.hero__video');
+    if (film) gsap.fromTo(film, { scale: 1, opacity: 1 }, { scale: 1.15, opacity: 0.4, ease: 'none', immediateRender: false, scrollTrigger: scrub });
     if (word) gsap.to(word, { xPercent: -18, ease: 'none', scrollTrigger: scrub });
   }
 

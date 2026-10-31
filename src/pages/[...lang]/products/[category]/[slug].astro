@@ -1,0 +1,31 @@
+---
+/**
+ * Two kinds of pages share this URL shape:
+ *   /products/<category>/<line>     a line within a category (e.g. gloves/essential, fightwear/accessories)
+ *   /products/<category>/<product>  a product page (e.g. gloves/aiba-boxing-gloves-black)
+ * Line ids and product ids never overlap.
+ */
+import Listing from '../../../../components/Listing.astro';
+import ProductDetail from '../../../../components/ProductDetail.astro';
+import { CATEGORIES } from '../../../../data/products';
+import { PRODUCTS, linesInCategory, type Line, type Product } from '../../../../data/shop';
+import { LANGS, DEFAULT_LANG, langFromParam } from '../../../../i18n';
+
+export function getStaticPaths() {
+  return LANGS.flatMap((lang) => {
+    const l = lang === DEFAULT_LANG ? undefined : lang;
+    const linePages = CATEGORIES.flatMap((c) => {
+      const lines = linesInCategory(c.id);
+      // A category with a single line needs no separate line page.
+      return lines.length > 1 ? lines.map((line) => ({ params: { lang: l, category: c.id, slug: line.id as string }, props: { line } })) : [];
+    });
+    const productPages = PRODUCTS.map((product) => ({ params: { lang: l, category: product.category, slug: product.id }, props: { product } }));
+    return [...linePages, ...productPages];
+  });
+}
+
+const { line, product } = Astro.props as { line?: Line; product?: Product };
+const params = Astro.params as { lang?: string; category: string; slug: string };
+const lang = langFromParam(params.lang);
+---
+{product ? <ProductDetail product={product} lang={lang} /> : <Listing lang={lang} category={params.category as any} line={line} />}
