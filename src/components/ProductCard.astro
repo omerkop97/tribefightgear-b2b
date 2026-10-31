@@ -1,0 +1,38 @@
+---
+import { img, srcset } from '../data/products';
+import { lineById, type Product } from '../data/shop';
+import { localePath, type Lang } from '../i18n';
+
+interface Props { product: Product; lang: Lang; }
+const { product: p, lang } = Astro.props;
+const line = lineById(p.line);
+const href = localePath(lang, `/products/${p.line}/${p.id}`);
+---
+<a class:list={['pcard', `pcard--${p.line}`]} href={href} data-category={p.category} data-line={p.line}>
+  <div class="pcard__stage stage">
+    <img class="pcard__img" src={img(p.category, p.slug, 1, 700)} srcset={srcset(p.category, p.slug, 1)} sizes="(min-width: 1100px) 30vw, (min-width: 640px) 45vw, 90vw" alt={p.title[lang]} width="700" height="700" loading="lazy" />
+    {p.images > 1 && <img class="pcard__img pcard__img--alt" src={img(p.category, p.slug, 2, 700)} alt="" aria-hidden="true" width="700" height="700" loading="lazy" />}
+    <span class="pcard__line">{line.name[lang]}</span>
+  </div>
+  <div class="pcard__body">
+    <h3 class="pcard__title">{p.title[lang]}</h3>
+    <span class="pcard__sku">{p.sku}</span>
+  </div>
+</a>
+
+<style>
+  .pcard { display: grid; gap: 14px; align-content: start; }
+  .pcard__stage { aspect-ratio: 1; border: 1px solid var(--line); transition: border-color 0.4s var(--ease); }
+  .pcard:hover .pcard__stage { border-color: var(--accent); }
+  .pcard__img { position: absolute; inset: 0; padding: 9%; transition: opacity 0.5s var(--ease), transform 0.8s var(--ease); }
+  .pcard__img--alt { opacity: 0; }
+  .pcard:hover .pcard__img { transform: scale(1.04); }
+  .pcard:hover .pcard__img--alt { opacity: 1; }
+  .pcard:hover .pcard__img:not(.pcard__img--alt):has(+ .pcard__img--alt) { opacity: 0; }
+  .pcard__line { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 9px; background: var(--bg); border: 1px solid var(--line); }
+  .pcard--elite .pcard__line { color: var(--sand); border-color: color-mix(in srgb, var(--sand) 45%, transparent); }
+  .pcard__body { display: grid; gap: 4px; }
+  .pcard__title { font-size: 1.25rem; letter-spacing: 0.03em; line-height: 1.1; transition: color 0.25s; }
+  .pcard:hover .pcard__title { color: var(--accent); }
+  .pcard__sku { font-size: 0.8rem; letter-spacing: 0.08em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+</style>

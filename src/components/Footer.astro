@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { BOOKING_URL, EMAIL, ISPO, PHONE_DISPLAY, PHONE_E164, whatsappUrl } from '../data/site';
-import { CATEGORIES } from '../data/products';
+import { LINES } from '../data/shop';
 import { localePath, t, type Lang } from '../i18n';
 
 const { lang } = Astro.props as { lang: Lang };
@@ -24,7 +24,8 @@ const year = new Date().getFullYear();
     <div>
       <h3 class="footer__h">{d.footer.explore}</h3>
       <ul>
-        {CATEGORIES.map((c) => <li><a href={p(`/products/${c.id}`)}>{c.name[lang]}</a></li>)}
+        {LINES.map((l) => <li><a href={p(`/products/${l.id}`)}>{l.name[lang]}</a></li>)}
+        <li><a href={p('/products')}>{d.shop.allProducts}</a></li>
       </ul>
     </div>
     <div>

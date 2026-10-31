@@ -8,7 +8,7 @@ export const EMAIL = '';
 
 export const ISPO = {
   venue: 'RAI Amsterdam',
-  dates: { en: '3–5 November 2026', nl: '3–5 november 2026' },
+  dates: { en: '4–5 November 2026', nl: '4–5 november 2026' },
   stand: '2E30',
   // The banner hides itself after this moment.
   endsAt: '2026-11-06T00:00:00+01:00',
@@ -25,7 +25,7 @@ const details = encodeURIComponent(
 export const BOOKING_URL =
   'https://calendar.google.com/calendar/render?action=TEMPLATE' +
   '&text=' + encodeURIComponent('Meeting Tribe Gear B2B, ISPO 2026') +
-  '&dates=20261103T100000/20261103T103000&ctz=Europe/Amsterdam' +
+  '&dates=20261104T100000/20261104T103000&ctz=Europe/Amsterdam' +
   '&location=' + encodeURIComponent(`RAI Amsterdam, Stand ${ISPO.stand}`) +
   '&details=' + details;
 

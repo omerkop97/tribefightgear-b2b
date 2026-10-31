@@ -1,0 +1,43 @@
+---
+import ProductCard from './ProductCard.astro';
+import type { Product } from '../data/shop';
+import { t, type Lang } from '../i18n';
+
+/** Webshop-style grid with filter chips (client-side, no reload). */
+interface Props {
+  products: Product[];
+  lang: Lang;
+  /** Chips to filter by; each value matches a card's data-category or data-line. */
+  filters?: { key: 'category' | 'line'; options: { value: string; label: string }[] };
+}
+const { products, lang, filters } = Astro.props;
+const d = t(lang).shop;
+const options = (filters?.options ?? []).filter((o) => products.some((p) => p[filters!.key] === o.value));
+---
+<div class="pgrid" data-pgrid data-filter-key={filters?.key}>
+  <div class="pgrid__bar">
+    {options.length > 1 ? (
+      <div class="pgrid__chips" role="group" aria-label={d.filter}>
+        <button type="button" class="chip" data-filter-value="" aria-pressed="true">{d.all}</button>
+        {options.map((o) => <button type="button" class="chip" data-filter-value={o.value} aria-pressed="false">{o.label}</button>)}
+      </div>
+    ) : <span />}
+    <span class="pgrid__count"><span data-count-visible>{products.length}</span> <span data-count-label data-one={d.product} data-many={d.products}>{products.length === 1 ? d.product : d.products}</span></span>
+  </div>
+  <div class="pgrid__items">
+    {products.map((p) => <ProductCard product={p} lang={lang} />)}
+  </div>
+</div>
+
+<style>
+  .pgrid__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-block: 16px; margin-bottom: 28px; border-block: 1px solid var(--line); }
+  .pgrid__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 8px 16px; border: 1px solid var(--line-strong); font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); transition: background-color 0.25s, color 0.25s, border-color 0.25s; }
+  .chip:hover { color: var(--ink); border-color: var(--ink); }
+  .chip[aria-pressed='true'] { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
+  .pgrid__count { font-size: 0.85rem; color: var(--ink-3); letter-spacing: 0.04em; }
+  .pgrid__items { display: grid; gap: 40px 20px; grid-template-columns: 1fr 1fr; }
+  @media (min-width: 900px) { .pgrid__items { grid-template-columns: repeat(3, 1fr); gap: 48px 24px; } }
+  @media (max-width: 420px) { .pgrid__items { gap: 28px 12px; } }
+  .pgrid__items > :global([hidden]) { display: none; }
+</style>

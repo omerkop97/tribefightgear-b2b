@@ -1,0 +1,177 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import Icon from '../../../../components/Icon.astro';
+import Lightbox from '../../../../components/Lightbox.astro';
+import Customise from '../../../../components/Customise.astro';
+import ProductCard from '../../../../components/ProductCard.astro';
+import FinalCta from '../../../../components/sections/FinalCta.astro';
+import { CATEGORIES, img, srcset } from '../../../../data/products';
+import { PRODUCTS, lineById, type Product } from '../../../../data/shop';
+import { BOOKING_URL, whatsappUrl } from '../../../../data/site';
+import { LANGS, DEFAULT_LANG, langFromParam, localePath, t } from '../../../../i18n';
+
+export function getStaticPaths() {
+  return LANGS.flatMap((lang) =>
+    PRODUCTS.map((product) => ({
+      params: { lang: lang === DEFAULT_LANG ? undefined : lang, line: product.line, product: product.id },
+      props: { product },
+    })),
+  );
+}
+
+const { product: p } = Astro.props as { product: Product };
+const lang = langFromParam(Astro.params.lang);
+const d = t(lang);
+const line = lineById(p.line);
+const category = CATEGORIES.find((c) => c.id === p.category)!;
+const title = p.title[lang];
+const angles = Array.from({ length: p.images }, (_, i) => i + 1);
+const ask = whatsappUrl(d.shop.requestMsg.replace('{title}', title).replace('{sku}', p.sku));
+
+// Same line first, same category on top, then the rest of the line.
+const related = PRODUCTS.filter((x) => x.line === p.line && x !== p)
+  .sort((a, b) => Number(b.category === p.category) - Number(a.category === p.category))
+  .slice(0, 6);
+
+const focusPoints = ['50% 70%', '30% 40%', '62% 30%', '50% 50%', '70% 70%', '40% 25%'];
+const closeups = focusPoints.map((focus, i) => ({ src: img(p.category, p.slug, (i % p.images) + 1, 1400), focus }));
+---
+<Base lang={lang} path={`/products/${p.line}/${p.id}`} title={`${title} (${p.sku})`} description={`${title}, ${line.name[lang]}. ${line.body[lang]}`}>
+  <section class="pd">
+    <div class="container">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href={localePath(lang, '/')}>Home</a><span>/</span>
+        <a href={localePath(lang, '/products')}>{d.nav.products}</a><span>/</span>
+        <a href={localePath(lang, `/products/${p.line}`)}>{line.name[lang]}</a><span>/</span>
+        <span aria-current="page">{title}</span>
+      </nav>
+
+      <div class="pd__grid">
+        <div class="pd__media" data-gallery data-lightbox-group={p.id}>
+          <button class="pd__stage stage grain" type="button" data-lightbox-open aria-label={`${d.products.enlarge}: ${title}`}>
+            <img
+              data-gallery-main
+              src={img(p.category, p.slug, 1, 1400)}
+              srcset={srcset(p.category, p.slug, 1)}
+              sizes="(min-width: 1024px) 55vw, 92vw"
+              alt={title}
+              width="1400" height="1400" fetchpriority="high"
+            />
+            <span class="pd__zoom"><Icon name="plus" /></span>
+          </button>
+          {p.images > 1 && (
+            <div class="pd__thumbs" role="group" aria-label={`${p.images} ${d.shop.angles}`}>
+              {angles.map((n) => (
+                <button
+                  type="button"
+                  data-gallery-thumb
+                  data-lightbox-item={img(p.category, p.slug, n, 1400)}
+                  data-src={img(p.category, p.slug, n, 1400)}
+                  data-srcset={srcset(p.category, p.slug, n)}
+                  aria-pressed={n === 1 ? 'true' : 'false'}
+                  aria-label={`${d.products.view} ${n}`}
+                >
+                  <img src={img(p.category, p.slug, n, 700)} alt="" width="700" height="700" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div class="pd__info">
+          <a class:list={['pd__line', `pd__line--${p.line}`]} href={localePath(lang, `/products/${p.line}`)}>{line.name[lang]}</a>
+          <h1 class="pd__title">{title}</h1>
+          <p class="pd__sku">{d.shop.sku} {p.sku}</p>
+
+          <dl class="pd__specs">
+            <div><dt>{d.shop.type}</dt><dd>{p.type[lang]}</dd></div>
+            <div><dt>{d.shop.category}</dt><dd><a href={localePath(lang, `/products/${p.category}`)}>{category.name[lang]}</a></dd></div>
+            <div><dt>{d.shop.line}</dt><dd>{line.name[lang]}</dd></div>
+            {p.material && <div><dt>{d.products.material}</dt><dd>{p.material[lang]}</dd></div>}
+            <div><dt>{d.shop.angles}</dt><dd>{p.images}</dd></div>
+          </dl>
+
+          <div class="pd__opts">
+            <span class="pd__label">{d.products.options}</span>
+            <ul>{d.products.optionList.map((o) => <li><Icon name="check" />{o}</li>)}</ul>
+          </div>
+
+          <div class="pd__ctas">
+            <a class="btn btn--primary" href={ask} target="_blank" rel="noopener"><Icon name="whatsapp" /> {d.shop.request}</a>
+            <a class="btn btn--ghost" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Customise lang={lang} closeups={closeups} />
+
+  {related.length > 0 && (
+    <section class="section related">
+      <div class="container">
+        <div class="related__head">
+          <h2 class="display-m">{d.shop.more} {line.name[lang]}</h2>
+          <a class="link-arrow" href={localePath(lang, `/products/${p.line}`)}>{d.shop.viewLine} <Icon name="arrow" /></a>
+        </div>
+        <div class="related__grid">
+          {related.map((r) => <ProductCard product={r} lang={lang} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <FinalCta lang={lang} />
+  <Lightbox lang={lang} />
+</Base>
+
+<style>
+  .pd { padding-block: clamp(28px, 4vw, 48px) clamp(64px, 8vw, 112px); }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; color: var(--ink-3); margin-bottom: clamp(20px, 3vw, 36px); }
+  .crumbs a:hover { color: var(--accent); }
+  .pd__grid { display: grid; gap: clamp(28px, 4vw, 64px); align-items: start; }
+  @media (min-width: 1024px) {
+    .pd__grid { grid-template-columns: 1.25fr 1fr; }
+    .pd__info { position: sticky; top: 100px; }
+  }
+
+  .pd__media { display: grid; gap: 10px; }
+  .pd__stage { display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 1px solid var(--line); cursor: zoom-in; }
+  .pd__stage img { padding: 7%; transition: transform 0.9s var(--ease); }
+  .pd__stage:hover img { transform: scale(1.04); }
+  .pd__zoom { position: absolute; right: 16px; bottom: 16px; z-index: 2; width: 44px; height: 44px; display: grid; place-items: center; background: var(--accent-fill); color: var(--on-accent); transition: transform 0.4s var(--ease); }
+  .pd__zoom :global(svg) { width: 20px; height: 20px; }
+  .pd__stage:hover .pd__zoom { transform: rotate(90deg); }
+  .pd__thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .pd__thumbs button { aspect-ratio: 1; background: var(--stage); border: 1px solid var(--line); opacity: 0.7; transition: opacity 0.25s, border-color 0.25s; }
+  .pd__thumbs button:hover { opacity: 1; }
+  .pd__thumbs button[aria-pressed='true'] { opacity: 1; border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .pd__thumbs img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
+
+  .pd__info { display: grid; gap: 20px; align-content: start; }
+  .pd__line { justify-self: start; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line-strong); color: var(--accent); }
+  .pd__line--elite { color: var(--sand); border-color: color-mix(in srgb, var(--sand) 45%, transparent); }
+  .pd__title { font-size: clamp(2.6rem, 5vw, 4.4rem); font-weight: 800; }
+  .pd__sku { margin-top: -10px; font-size: 0.95rem; letter-spacing: 0.08em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .pd__specs { margin: 0; display: grid; border-top: 1px solid var(--line); }
+  .pd__specs div { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .pd__specs dt { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); align-self: center; }
+  .pd__specs dd { margin: 0; font-weight: 600; }
+  .pd__specs dd a:hover { color: var(--accent); }
+  .pd__opts { display: grid; gap: 12px; }
+  .pd__label { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .pd__opts ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .pd__opts li { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid var(--line); font-size: 0.88rem; background: var(--surface); }
+  .pd__opts li :global(svg) { width: 14px; height: 14px; color: var(--accent); }
+  .pd__ctas { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 4px; }
+  @media (max-width: 520px) {
+    .pd__thumbs { grid-template-columns: repeat(4, 1fr); }
+    .pd__ctas .btn { width: 100%; }
+    .pd__specs div { grid-template-columns: 110px 1fr; }
+  }
+
+  .related { border-top: 1px solid var(--line); }
+  .related__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 32px; }
+  .related__grid { display: grid; gap: 40px 20px; grid-template-columns: 1fr 1fr; }
+  @media (min-width: 900px) { .related__grid { grid-template-columns: repeat(3, 1fr); gap: 48px 24px; } }
+</style>

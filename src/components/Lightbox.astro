@@ -1,0 +1,31 @@
+---
+import Icon from './Icon.astro';
+import { t, type Lang } from '../i18n';
+
+/** Fullscreen image viewer, filled by ui.ts from the nearest [data-lightbox-group]. */
+const { lang } = Astro.props as { lang: Lang };
+const d = t(lang).products;
+---
+<div class="lb" data-lightbox hidden role="dialog" aria-modal="true" aria-label={d.enlarge}>
+  <button class="lb__btn lb__close" type="button" data-lb-close aria-label={d.close}><Icon name="close" /></button>
+  <button class="lb__btn lb__prev" type="button" data-lb-prev aria-label={d.prev}><Icon name="arrow" /></button>
+  <figure class="lb__fig"><img data-lb-img alt="" /></figure>
+  <button class="lb__btn lb__next" type="button" data-lb-next aria-label={d.nextImg}><Icon name="arrow" /></button>
+  <span class="lb__count" data-lb-count></span>
+</div>
+
+<style>
+  .lb { position: fixed; inset: 0; z-index: 100; background: rgba(8, 9, 6, 0.94); display: grid; place-items: center; }
+  .lb[hidden] { display: none; }
+  .lb__fig { margin: 0; width: min(88vw, 88vh); aspect-ratio: 1; background: radial-gradient(circle at 50% 46%, #3a3f2c 0%, #15170f 70%); }
+  .lb__fig img { width: 100%; height: 100%; object-fit: contain; padding: 6%; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.5)); }
+  .lb__btn { position: absolute; width: 52px; height: 52px; display: grid; place-items: center; color: #efece2; border: 1px solid rgba(239, 236, 226, 0.25); transition: background-color 0.2s; }
+  .lb__btn:hover { background: #4b5320; border-color: #4b5320; }
+  .lb__btn :global(svg) { width: 22px; height: 22px; }
+  .lb__close { top: 20px; right: 20px; }
+  .lb__prev { left: 20px; top: 50%; translate: 0 -50%; }
+  .lb__prev :global(svg) { rotate: 180deg; }
+  .lb__next { right: 20px; top: 50%; translate: 0 -50%; }
+  .lb__count { position: absolute; bottom: 24px; left: 50%; translate: -50% 0; color: rgba(239, 236, 226, 0.7); font-family: var(--font-display); letter-spacing: 0.16em; }
+  @media (max-width: 600px) { .lb__prev, .lb__next { top: auto; bottom: 16px; translate: none; } .lb__count { bottom: 32px; } }
+</style>

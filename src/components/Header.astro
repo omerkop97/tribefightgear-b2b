@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { BOOKING_URL } from '../data/site';
-import { CATEGORIES } from '../data/products';
+import { LINES, productsInLine } from '../data/shop';
 import { localePath, t, type Lang } from '../i18n';
 
 interface Props { lang: Lang; path: string; }
@@ -31,13 +31,18 @@ const links = [
         </a>
         <div class="drop">
           <div class="drop__inner">
-            {CATEGORIES.map((c, i) => (
-              <a href={p(`/products/${c.id}`)} class="drop__link">
+            {LINES.map((l, i) => (
+              <a href={p(`/products/${l.id}`)} class:list={['drop__link', `drop__link--${l.id}`]}>
                 <span class="drop__num">0{i + 1}</span>
-                <span class="drop__name">{c.name[lang]}</span>
-                <span class="drop__desc">{c.short[lang]}</span>
+                <span class="drop__name">{l.name[lang]}</span>
+                <span class="drop__desc">{l.tagline[lang]} · {productsInLine(l.id).length || 'ISPO'} {productsInLine(l.id).length === 1 ? d.shop.product : productsInLine(l.id).length ? d.shop.products : ''}</span>
               </a>
             ))}
+            <a href={p('/products')} class="drop__link drop__link--all">
+              <span class="drop__num">→</span>
+              <span class="drop__name">{d.shop.allProducts}</span>
+              <span class="drop__desc">{d.shop.allProductsBody}</span>
+            </a>
           </div>
         </div>
       </div>
@@ -71,7 +76,7 @@ const links = [
   <nav class="mmenu__nav container" aria-label="Mobile">
     <a href={p('/products')} class="mmenu__link">{d.nav.products}</a>
     <div class="mmenu__sub">
-      {CATEGORIES.map((c) => <a href={p(`/products/${c.id}`)}>{c.name[lang]}</a>)}
+      {LINES.map((l) => <a href={p(`/products/${l.id}`)}>{l.name[lang]}</a>)}
     </div>
     {links.map((l) => <a href={p(l.to)} class="mmenu__link">{l.label}</a>)}
   </nav>
@@ -129,6 +134,8 @@ const links = [
   .drop__num { font-family: var(--font-display); color: var(--accent); font-weight: 700; grid-row: span 2; }
   .drop__name { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: 1.15rem; letter-spacing: 0.03em; }
   .drop__desc { font-size: 0.85rem; color: var(--ink-2); line-height: 1.45; }
+  .drop__link--elite .drop__name { color: var(--sand); }
+  .drop__link--all { background: var(--accent-soft); }
 
   .header__tools { display: flex; align-items: center; gap: 8px; }
   .tool { height: 42px; min-width: 42px; display: inline-grid; place-items: center; border: 1px solid var(--line); color: var(--ink); transition: border-color 0.25s, background-color 0.25s; }

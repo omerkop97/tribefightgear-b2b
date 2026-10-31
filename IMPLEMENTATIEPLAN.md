@@ -143,6 +143,8 @@ Na ISPO: banner uitschakelen/ombouwen, fabrieksvideo toevoegen, Performance/Elit
 
 - Tweede fotolevering (17 okt, 140 foto's) verwerkt: Elite (Apex, Glory, Fly) in Gloves, Protective en Coaching; Accessories (Speedball, Shin In Step, Groin Guard, Boxing Shoes) onder Fightwear & Accessories; Venum MMA nu 9 foto's. Apex is de hero-foto.
 
+- Feedback klant (31 okt) verwerkt: ISPO-datum 4–5 november; Products-menu toont de lijnen (Essential, Performance, Elite, MMA Gloves, Accessories); per lijn een webshop-raster met filters; elke product een eigen pagina met naam + artikelnummer; 30+ customised products; productiestappen (cutting, moulding…) verwijderd; "Together we rise" op zwarte achtergrond.
+
 **Nog te doen / aanleveren:**
 1. Google Calendar *Appointment schedule* aanmaken → link in `src/data/site.ts` (`BOOKING_URL`). Nu opent een vooringevulde agenda-afspraak; die meldt de afspraak niet bij jullie.
 2. ~~Logo~~ ✔ verwerkt (gevectoriseerd naar SVG: `src/assets/brand/`, losse bestanden in `public/brand/`, favicon).
@@ -151,3 +153,4 @@ Na ISPO: banner uitschakelen/ombouwen, fabrieksvideo toevoegen, Performance/Elit
 5. Foto's Performance-lijn, kledingstukken (fightwear), fabrieksvideo.
 6. Productnamen: voorlopig de mapnamen van de klant (Aiba, AD, RDX, Venum). Let op: RDX en Venum zijn merknamen van derden — vóór livegang definitieve namen bevestigen.
 7. Hosting (Vercel/Netlify) + livegang.
+8. **Echte artikelnummers.** Nu tijdelijke nummers volgens patroon `TG-<lijn>-<type>-<nr>` (bijv. `TG-ESS-BG-01`), gegenereerd in `src/data/shop.ts`.

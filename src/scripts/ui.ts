@@ -92,3 +92,30 @@ if (lb) {
     if (e.key === 'ArrowRight') show(index + 1);
   });
 }
+
+/* ---------- Product grid filters ---------- */
+document.querySelectorAll<HTMLElement>('[data-pgrid]').forEach((grid) => {
+  const key = grid.dataset.filterKey;
+  const chips = grid.querySelectorAll<HTMLButtonElement>('[data-filter-value]');
+  const cards = grid.querySelectorAll<HTMLElement>('.pcard');
+  const count = grid.querySelector<HTMLElement>('[data-count-visible]');
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const value = chip.dataset.filterValue;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      let visible = 0;
+      cards.forEach((card) => {
+        const show = !value || card.dataset[key === 'line' ? 'line' : 'category'] === value;
+        card.hidden = !show;
+        if (show) {
+          visible++;
+          card.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', delay: Math.min(visible, 9) * 30, fill: 'backwards' });
+        }
+      });
+      if (count) count.textContent = String(visible);
+      const label = grid.querySelector<HTMLElement>('[data-count-label]');
+      if (label) label.textContent = (visible === 1 ? label.dataset.one : label.dataset.many) ?? '';
+      window.dispatchEvent(new Event('resize'));
+    });
+  });
+});
