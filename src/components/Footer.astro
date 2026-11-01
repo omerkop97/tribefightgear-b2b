@@ -11,7 +11,6 @@ const p = (to: string) => localePath(lang, to);
 const year = new Date().getFullYear();
 ---
 <footer class="footer">
-  <div class="footer__big container" aria-hidden="true" data-footer-word>Tribe Gear</div>
   <div class="container footer__grid">
     <div class="footer__brand">
       <Logo />
@@ -51,16 +50,41 @@ const year = new Date().getFullYear();
     <span>© {year} Tribe Gear B2B. {d.footer.rights}</span>
     <a href={p('/privacy')}>{d.footer.privacy}</a>
   </div>
+  <div class="fword" data-footer-word aria-hidden="true">
+    <div class="container">
+      <div class="fword__clip">
+        <div class="fword__mark" data-footer-mark>
+          <span class="fword__fill"></span>
+          <span class="fword__light" data-footer-light></span>
+        </div>
+      </div>
+    </div>
+  </div>
 </footer>
 
 <style>
   .footer { background: var(--bg-2); border-top: 1px solid var(--line); overflow: hidden; }
-  .footer__big {
-    font-family: var(--font-display); font-weight: 800; text-transform: uppercase;
-    font-size: clamp(4rem, 17vw, 16rem); line-height: 0.8; letter-spacing: -0.01em;
-    color: transparent; -webkit-text-stroke: 1px var(--line-strong);
-    padding-top: 48px; white-space: nowrap;
+  /* Closing wordmark: the real logo, masked over a gradient + a spotlight that follows the cursor */
+  .fword { overflow: hidden; padding-top: clamp(24px, 4vw, 48px); }
+  .fword__clip { overflow: hidden; height: calc((100vw - 2 * var(--gutter)) * 566 / 4267 * 0.86); max-height: calc((var(--container) - 2 * var(--gutter)) * 566 / 4267 * 0.86); }
+  .fword__mark {
+    --mx: 50%; --my: 40%;
+    position: relative; width: 100%; aspect-ratio: 4267 / 566;
+    -webkit-mask: url('/brand/tribe-gear-wordmark.svg') center / 100% 100% no-repeat;
+    mask: url('/brand/tribe-gear-wordmark.svg') center / 100% 100% no-repeat;
+    will-change: transform;
   }
+  .fword__fill, .fword__light { position: absolute; inset: 0; }
+  .fword__fill { background: linear-gradient(180deg, rgba(238, 235, 225, 0.16) 0%, rgba(238, 235, 225, 0.06) 55%, rgba(238, 235, 225, 0) 100%); }
+  .fword__light {
+    background: radial-gradient(circle 22vw at var(--mx) var(--my), rgba(163, 176, 108, 0.95) 0%, rgba(110, 122, 52, 0.55) 35%, transparent 70%);
+    opacity: 0; transition: opacity 0.5s var(--ease);
+  }
+  .fword:hover .fword__light, .fword__light.is-on { opacity: 1; }
+  @media (hover: none) {
+    .fword__light.is-on { animation: fwsweep 2.6s var(--ease) forwards; }
+  }
+  @keyframes fwsweep { 0% { --mx: 0%; opacity: 0; } 20% { opacity: 1; } 100% { --mx: 100%; opacity: 0; } }
   .footer__grid { display: grid; gap: 40px; padding-block: 56px; grid-template-columns: 1fr 1fr; }
   .footer__brand { grid-column: 1 / -1; display: grid; gap: 20px; align-content: start; max-width: 380px; }
   .footer__ispo { padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 6px; font-size: 0.95rem; }

@@ -171,3 +171,5 @@ p { margin: 0; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 .motion [data-hero-in], .motion [data-hero-product], .motion [data-hero-word] { opacity: 0; }
+
+@property --mx { syntax: '<percentage>'; inherits: true; initial-value: 50%; }

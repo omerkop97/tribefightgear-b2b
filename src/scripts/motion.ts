@@ -222,12 +222,12 @@ function initMotion() {
     });
   });
 
-  /* ---------- Footer word drift ---------- */
-  const footerWord = document.querySelector('[data-footer-word]');
-  if (footerWord) {
-    gsap.fromTo(footerWord, { xPercent: 6 }, {
-      xPercent: -6, ease: 'none',
-      scrollTrigger: { trigger: footerWord, start: 'top bottom', end: 'bottom top', scrub: true },
+  /* ---------- Footer wordmark: rises into view ---------- */
+  const footerMark = document.querySelector('[data-footer-mark]');
+  if (footerMark) {
+    gsap.fromTo(footerMark, { yPercent: 70 }, {
+      yPercent: 0, ease: 'none',
+      scrollTrigger: { trigger: '[data-footer-word]', start: 'top bottom', end: 'bottom bottom', scrub: 0.6 },
     });
   }
 

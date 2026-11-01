@@ -160,3 +160,22 @@ if (loops.length && !window.matchMedia('(prefers-reduced-motion: reduce)').match
   window.setInterval(() => loops.forEach(resume), 2000);
 }
 
+
+/* ---------- Footer wordmark spotlight ---------- */
+document.querySelectorAll<HTMLElement>('[data-footer-word]').forEach((wrap) => {
+  const mark = wrap.querySelector<HTMLElement>('[data-footer-mark]');
+  const light = wrap.querySelector<HTMLElement>('[data-footer-light]');
+  if (!mark || !light) return;
+  wrap.addEventListener('pointermove', (e) => {
+    const r = mark.getBoundingClientRect();
+    mark.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    mark.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  });
+  // Touch screens: one light sweep when the wordmark comes into view.
+  if (window.matchMedia('(hover: none)').matches && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { light.classList.add('is-on'); io.disconnect(); }
+    }, { threshold: 0.6 });
+    io.observe(mark);
+  }
+});
