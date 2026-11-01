@@ -31,11 +31,6 @@ export interface Product extends Model {
   photos: number[];
   /** Key shared by all colourways of the same model (for "also available in"). */
   family: string;
-  /**
-   * TODO: placeholder article numbers (TG-<line>-<type>-<nn>-<colour>).
-   * Replace with the client's real article numbers once delivered.
-   */
-  sku: string;
 }
 
 const same = (s: string): L => ({ en: s, nl: s });
@@ -86,35 +81,15 @@ export const LINES: Line[] = [
   },
 ];
 
-const LINE_CODE: Record<LineId, string> = { essential: 'ESS', performance: 'PRF', elite: 'ELT', mma: 'MMA', accessories: 'ACC', apparel: 'APP' };
-const TYPE_CODE: Record<string, string> = {
-  'Boxing gloves': 'BG',
-  'MMA gloves': 'MG',
-  'Head guards': 'HG',
-  'Shin pads': 'SP',
-  'Focus pads': 'FP',
-  'Arm pads': 'AP',
-  'Belly pads': 'BP',
-  Speedballs: 'SB',
-  'Shin instep guards': 'SI',
-  'Groin guards': 'GG',
-  'Boxing shoes': 'BS',
-  'Thai shorts': 'TS',
-  'MMA apparel': 'MA',
-};
 
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
 
 function buildProducts(): Product[] {
   const out: Product[] = [];
-  const counters = new Map<string, number>();
   const add = (m: Model, line: LineId, category: CategoryId) => {
     // Accessories and fightwear are named by the product itself ("Speedball", "Thai Shorts").
     const isAccessory = line === 'accessories' || line === 'apparel';
-    const key = `${line}-${m.type.en}`;
-    const n = (counters.get(key) ?? 0) + 1;
-    counters.set(key, n);
     const base = isAccessory ? slugify(m.name) : `${slugify(m.name)}-${slugify(m.type.en)}`;
     // TRIBE Apex exists in both Performance and Elite: the later line gets its name in the URL.
     const taken = out.some((x) => x.category === category && x.family !== `${line}-${m.slug}` && x.id.startsWith(`${base}-`));
@@ -136,7 +111,6 @@ function buildProducts(): Product[] {
           : cw.closure
             ? { en: `${m.name} ${cw.closure.title.en} ${titleCase(m.type.en)}`, nl: `${m.name} ${m.type.nl} ${cw.closure.title.nl}` }
             : { en: `${m.name} ${titleCase(m.type.en)}`, nl: `${m.name} ${m.type.nl}` },
-        sku: `TG-${LINE_CODE[line]}-${TYPE_CODE[m.type.en] ?? 'XX'}-${String(n).padStart(2, '0')}-${cw.colour.code}${cw.closure ? `-${cw.closure.code}` : ''}`,
       });
     }
   };

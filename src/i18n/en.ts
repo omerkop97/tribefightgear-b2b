@@ -141,7 +141,6 @@ export const en = {
     angles: 'angles',
     material: 'Material',
     planned: 'Coming to the collection',
-    seeAtIspo: 'See it at ISPO, stand 2E30',
     back: 'All categories',
     next: 'Next category',
     view: 'View angle',
@@ -156,7 +155,6 @@ export const en = {
     nextImg: 'Next',
     options: 'Customisable',
     optionList: ['Material', 'Colourway', 'Logo & branding', 'Padding', 'Closure', 'Packaging'],
-    comingTitle: 'Coming at ISPO',
     comingBody: 'Our Performance line is presented exclusively at ISPO 2026. Book a slot to see and test it first.',
   },
   shop: {
@@ -167,7 +165,6 @@ export const en = {
     allProducts: 'All products',
     allProductsBody: 'Our full range across every line. Each product is a starting point that we develop into your own model.',
     lines: 'Product lines',
-    sku: 'Art. no.',
     type: 'Product',
     line: 'Line',
     category: 'Category',

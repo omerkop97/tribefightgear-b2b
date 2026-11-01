@@ -1,8 +1,8 @@
 ---
+/** All products: same compact header + grid as the category pages, with category tabs. */
 import Base from '../../../layouts/Base.astro';
-import PageHero from '../../../components/PageHero.astro';
 import ProductGrid from '../../../components/ProductGrid.astro';
-import FinalCta from '../../../components/sections/FinalCta.astro';
+import CtaStrip from '../../../components/CtaStrip.astro';
 import { CATEGORIES } from '../../../data/products';
 import { PRODUCTS } from '../../../data/shop';
 import { langPaths, langFromParam, localePath, t } from '../../../i18n';
@@ -10,19 +10,51 @@ import { langPaths, langFromParam, localePath, t } from '../../../i18n';
 export const getStaticPaths = langPaths;
 const lang = langFromParam(Astro.params.lang);
 const d = t(lang);
+const typeOptions = [...new Map(PRODUCTS.map((p) => [p.category, { value: p.category, label: CATEGORIES.find((c) => c.id === p.category)!.name[lang] }])).values()];
 ---
 <Base lang={lang} path="/products" title={d.shop.allProducts} description={d.shop.allProductsBody}>
-  <PageHero
-    eyebrow={d.categories.eyebrow}
-    title={d.shop.allProducts}
-    body={d.shop.allProductsBody}
-    word="Equipment"
-    crumbs={[{ label: 'Home', href: localePath(lang, '/') }]}
-  />
-  <section class="section--tight">
+  <section class="lh">
+    <div class="container lh__copy">
+      <nav class="lh__crumbs" aria-label="Breadcrumb">
+        <a href={localePath(lang, '/')}>Home</a><span>/</span><span aria-current="page">{d.shop.allProducts}</span>
+      </nav>
+      <span class="eyebrow">{d.categories.eyebrow}</span>
+      <h1 class="lh__title" data-split="load">{d.shop.allProducts}</h1>
+      <p class="lh__body">{d.shop.allProductsBody}</p>
+    </div>
+    <nav class="lt" aria-label={d.nav.products}>
+      <div class="container lt__inner">
+        <a href={localePath(lang, '/products')} class="lt__tab is-active">{d.shop.all}</a>
+        {CATEGORIES.map((c) => <a href={localePath(lang, `/products/${c.id}`)} class="lt__tab">{c.name[lang]}</a>)}
+      </div>
+    </nav>
+  </section>
+
+  <section class="list-body">
     <div class="container">
-      <ProductGrid products={PRODUCTS} lang={lang} filters={{ key: 'category', options: CATEGORIES.map((c) => ({ value: c.id, label: c.name[lang] })) }} />
+      <ProductGrid products={PRODUCTS} lang={lang} filters={{ key: 'category', options: typeOptions }} />
     </div>
   </section>
-  <FinalCta lang={lang} />
+
+  <CtaStrip lang={lang} />
 </Base>
+
+<style>
+  .lh { border-bottom: 1px solid var(--line); }
+  .lh__copy { display: grid; gap: 16px; justify-items: start; max-width: 760px; padding-block: clamp(28px, 4vw, 56px); margin-inline: 0; }
+  .lh__crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; color: var(--ink-3); }
+  .lh__crumbs a:hover { color: var(--accent); }
+  .lh__title { font-size: clamp(3rem, 7vw, 6.4rem); font-weight: 800; line-height: 0.9; }
+  .lh__body { color: var(--ink-2); font-size: 1.05rem; max-width: 56ch; }
+  .lt { border-top: 1px solid var(--line); }
+  .lt__inner { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .lt__tab {
+    position: relative; padding: 18px 18px 16px; white-space: nowrap;
+    font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+    transition: color 0.25s;
+  }
+  .lt__tab::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: -1px; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.45s var(--ease); }
+  .lt__tab:hover, .lt__tab.is-active { color: var(--ink); }
+  .lt__tab:hover::after, .lt__tab.is-active::after { transform: scaleX(1); }
+  .list-body { padding-block: clamp(28px, 4vw, 48px) clamp(64px, 8vw, 104px); }
+</style>

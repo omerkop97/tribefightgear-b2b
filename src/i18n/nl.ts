@@ -143,7 +143,6 @@ export const nl: typeof en = {
     angles: 'hoeken',
     material: 'Materiaal',
     planned: 'Binnenkort in de collectie',
-    seeAtIspo: 'Bekijk het op ISPO, stand 2E30',
     back: 'Alle categorieën',
     next: 'Volgende categorie',
     view: 'Bekijk hoek',
@@ -158,7 +157,6 @@ export const nl: typeof en = {
     nextImg: 'Volgende',
     options: 'Aan te passen',
     optionList: ['Materiaal', 'Kleurstelling', 'Logo & branding', 'Padding', 'Sluiting', 'Verpakking'],
-    comingTitle: 'Te zien op ISPO',
     comingBody: 'Onze Performance-lijn wordt exclusief gepresenteerd op ISPO 2026. Plan een afspraak om hem als eerste te zien en te testen.',
   },
   shop: {
@@ -169,7 +167,6 @@ export const nl: typeof en = {
     allProducts: 'Alle producten',
     allProductsBody: 'Ons volledige assortiment in alle lijnen. Elk product is een startpunt dat we doorontwikkelen tot jouw eigen model.',
     lines: 'Productlijnen',
-    sku: 'Art.nr.',
     type: 'Product',
     line: 'Lijn',
     category: 'Categorie',

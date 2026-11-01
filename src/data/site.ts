@@ -3,8 +3,7 @@ export const SITE_NAME = 'Tribe Gear B2B';
 export const PHONE_DISPLAY = '+31 6 54 29 69 77';
 export const PHONE_E164 = '31654296977';
 
-// Leave empty until the Google Workspace mailbox on the new domain exists.
-export const EMAIL = '';
+export const EMAIL = 'bart@tribefightgear.com';
 
 export const ISPO = {
   venue: 'RAI Amsterdam',
