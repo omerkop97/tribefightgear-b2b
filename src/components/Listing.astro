@@ -65,7 +65,7 @@ const comingSoon = line?.comingSoon?.[lang] ?? (products.length === 0 ? category
             {lines.map((l) => (
               <a href={localePath(lang, `/products/${catId}/${l.id}`)} class:list={['lt__tab', `lt__tab--${l.id}`, { 'is-active': line?.id === l.id }]}>
                 {l.name[lang]}
-                {productsIn(catId, l.id).length === 0 && <small>ISPO</small>}
+                {productsIn(catId, l.id).length === 0 && <small>{d.shop.soon}</small>}
               </a>
             ))}
           </div>
@@ -79,8 +79,7 @@ const comingSoon = line?.comingSoon?.[lang] ?? (products.length === 0 ? category
           <ProductGrid products={products} lang={lang} filters={filters} />
         ) : (
           <div class="soon" data-reveal>
-            <span class="eyebrow">ISPO 2026 · Stand 2E30</span>
-            <h2 class="display-m">{d.shop.comingTitle}</h2>
+                        <h2 class="display-m">{d.shop.comingTitle}</h2>
             {comingSoon && <p class="lead">{comingSoon}</p>}
             <a class="btn btn--primary" href={BOOKING_URL} target="_blank" rel="noopener"><Icon name="calendar" /> {d.cta.book}</a>
           </div>

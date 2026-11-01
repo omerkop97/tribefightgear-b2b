@@ -48,8 +48,8 @@ export const LINES: Line[] = [
     tagline: TIERS.performance.tagline,
     body: TIERS.performance.body,
     comingSoon: {
-      en: 'The Performance line is presented exclusively at ISPO 2026. Book a meeting to see and test it first.',
-      nl: 'De Performance-lijn wordt exclusief gepresenteerd op ISPO 2026. Plan een afspraak om hem als eerste te zien en te testen.',
+      en: 'Book a meeting to hear about the Performance line first.',
+      nl: 'Plan een afspraak om als eerste over de Performance-lijn te horen.',
     },
   },
   { id: 'elite', name: same(TIERS.elite.name), tagline: TIERS.elite.tagline, body: TIERS.elite.body },
@@ -76,8 +76,8 @@ export const LINES: Line[] = [
     name: { en: 'Fightwear', nl: 'Fightwear' },
     tagline: { en: 'Wear the brand', nl: 'Draag het merk' },
     body: {
-      en: 'Fightwear in the same design language as your equipment.',
-      nl: 'Fightwear in dezelfde designtaal als je materiaal.',
+      en: 'Thai shorts and MMA apparel in the same design language as your equipment.',
+      nl: 'Thaiboks-shorts en MMA-kleding in dezelfde designtaal als je materiaal.',
     },
     comingSoon: {
       en: 'The fightwear collection is presented at ISPO 2026. Book a meeting to see it first.',
@@ -99,6 +99,8 @@ const TYPE_CODE: Record<string, string> = {
   'Shin instep guards': 'SI',
   'Groin guards': 'GG',
   'Boxing shoes': 'BS',
+  'Thai shorts': 'TS',
+  'MMA apparel': 'MA',
 };
 
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -108,12 +110,13 @@ function buildProducts(): Product[] {
   const out: Product[] = [];
   const counters = new Map<string, number>();
   const add = (m: Model, line: LineId, category: CategoryId) => {
-    const isAccessory = line === 'accessories';
+    // Accessories and fightwear are named by the product itself ("Speedball", "Thai Shorts").
+    const isAccessory = line === 'accessories' || line === 'apparel';
     const key = `${line}-${m.type.en}`;
     const n = (counters.get(key) ?? 0) + 1;
     counters.set(key, n);
     const base = isAccessory ? slugify(m.name) : `${slugify(m.name)}-${slugify(m.type.en)}`;
-    // Apex exists in both Performance and Elite: the later line gets its name in the URL.
+    // TRIBE Apex exists in both Performance and Elite: the later line gets its name in the URL.
     const taken = out.some((x) => x.category === category && x.family !== `${line}-${m.slug}` && x.id.startsWith(`${base}-`));
     const stem = taken ? `${line}-${base}` : base;
     const colourways = m.colours ?? [];

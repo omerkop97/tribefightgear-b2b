@@ -1,45 +1,53 @@
 ---
 import { t, type Lang } from '../i18n';
 
+/**
+ * Bart & Jan: one shared photo (ISPO) with a card per person below.
+ * When separate portraits arrive, they can go back on the cards.
+ */
 const { lang } = Astro.props as { lang: Lang };
 const d = t(lang);
-// Drop the portraits in /public/images/team/bart.webp and jan.webp and set `photo` below.
-const people = [
-  { ...d.about.bart, initial: 'B', photo: '' },
-  { ...d.about.jan, initial: 'J', photo: '' },
-];
+const people = [d.about.bart, d.about.jan];
 ---
 <div class="people">
-  {people.map((p, i) => (
-    <article class="person" data-reveal data-delay={i * 0.12}>
-      <div class="person__photo stage grain" data-clip>
-        {p.photo ? (
-          <img src={p.photo} alt={p.name} loading="lazy" />
-        ) : (
-          <div class="person__ph">
-            <span class="person__initial">{p.initial}</span>
-            <span class="person__note">{d.about.portrait}</span>
-          </div>
-        )}
-      </div>
-      <div class="person__body">
+  <figure class="people__photo" data-clip>
+    <img
+      src="/images/team/bart-jan-ispo.webp"
+      srcset="/images/team/bart-jan-ispo-800.webp 800w, /images/team/bart-jan-ispo.webp 1600w"
+      sizes="(min-width: 1024px) 50vw, 92vw"
+      alt={d.about.photoAlt}
+      width="1600" height="2000" loading="lazy"
+    />
+    <figcaption>{d.about.photoCaption}</figcaption>
+  </figure>
+  <div class="people__cards">
+    {people.map((p, i) => (
+      <article class="person" data-reveal data-delay={i * 0.12}>
         <h3 class="display-s">{p.name}</h3>
         <p class="person__role">{p.role}</p>
         <p class="muted">{p.body}</p>
-      </div>
-    </article>
-  ))}
+      </article>
+    ))}
+  </div>
 </div>
 
 <style>
-  .people { display: grid; gap: 20px; }
-  .person { display: grid; gap: 20px; background: var(--surface); border: 1px solid var(--line); padding: 16px; }
-  .person__photo { aspect-ratio: 4 / 5; }
-  .person__photo img { object-fit: cover; filter: none; }
-  .person__ph { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; align-content: center; gap: 8px; }
-  .person__initial { font-family: var(--font-display); font-weight: 800; font-size: 9rem; line-height: 0.8; color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
-  .person__note { font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
-  .person__body { display: grid; gap: 8px; padding: 0 8px 8px; }
+  .people { display: grid; gap: 16px; }
+  .people__photo { position: relative; margin: 0; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+  .people__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+  .people__photo figcaption {
+    position: absolute; left: 16px; bottom: 16px;
+    padding: 6px 12px; background: rgba(10, 11, 8, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    font-family: var(--font-display); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.8rem; color: var(--ink);
+  }
+  .people__cards { display: grid; gap: 16px; }
+  .person { display: grid; gap: 8px; align-content: start; padding: 22px; background: var(--surface); border: 1px solid var(--line); }
   .person__role { font-weight: 600; color: var(--accent); }
-  @media (min-width: 640px) { .people { grid-template-columns: 1fr 1fr; } .person:nth-child(2) { margin-top: 64px; } }
+  @media (min-width: 640px) and (max-width: 899px) { .people__cards { grid-template-columns: 1fr 1fr; } }
+  /* Desktop: photo beside the two stacked cards, so the block fits on one screen */
+  @media (min-width: 900px) {
+    .people { grid-template-columns: 1.15fr 1fr; align-items: stretch; }
+    .people__photo { aspect-ratio: auto; height: 100%; min-height: 420px; max-height: 620px; }
+    .people__cards { align-content: stretch; }
+  }
 </style>

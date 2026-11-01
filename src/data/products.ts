@@ -59,6 +59,10 @@ const BGN: Colour = { code: 'BKN', name: { en: 'Black / Green', nl: 'Zwart / Gro
 const WG: Colour = { code: 'WGD', name: { en: 'White / Gold', nl: 'Wit / Goud' } };
 const WHT: Colour = { code: 'WHT', name: { en: 'White', nl: 'Wit' } };
 const GRN: Colour = { code: 'GRN', name: { en: 'Green', nl: 'Groen' } };
+const WBK: Colour = { code: 'WBK', name: { en: 'White / Black', nl: 'Wit / Zwart' } };
+const BSL: Colour = { code: 'BSL', name: { en: 'Black / Silver', nl: 'Zwart / Zilver' } };
+const GCM: Colour = { code: 'GCM', name: { en: 'Green Camo', nl: 'Groen Camo' } };
+const MNT: Colour = { code: 'MNT', name: { en: 'Mint / Grey', nl: 'Mint / Grijs' } };
 const GGD: Colour = { code: 'GGD', name: { en: 'Green / Gold', nl: 'Groen / Goud' } };
 
 const LACE: Closure = { code: 'L', name: { en: 'Lace-up', nl: 'Veters' }, title: { en: 'Lace-up', nl: 'met veters' } };
@@ -115,25 +119,25 @@ export const CATEGORIES: Category[] = [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala', name: 'Aiba', type: BOXING, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
-          { slug: 'dotline', name: 'AD', type: BOXING, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
-          { slug: 'warrior', name: 'RDX', type: BOXING, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
+          { slug: 'mandala', name: 'TRIBE Element', type: BOXING, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'dotline', name: 'TRIBE Foundation', type: BOXING, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'warrior', name: 'TRIBE Solid', type: BOXING, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
         ],
       },
       {
         id: 'performance',
         models: [
-          { slug: 'performance-apex', name: 'Apex', type: BOXING, images: 9, colours: [{ colour: BLK, images: [1, 2, 3], closure: LACE }, { colour: BLK, images: [4, 5, 6], closure: VELCRO }, { colour: WG, images: [7, 8, 9], closure: LACE }] },
-          { slug: 'top-king', name: 'Top King', type: BOXING, material: LEATHER, images: 6, colours: [{ colour: BGD, images: [1, 2, 3] }, { colour: GGD, images: [4, 5, 6] }] },
-          { slug: 'twins', name: 'Twins', type: BOXING, material: LEATHER, images: 3, colours: [{ colour: BGN, images: [1, 2, 3] }] },
+          { slug: 'performance-apex', name: 'TRIBE Apex', type: BOXING, images: 9, colours: [{ colour: BLK, images: [1, 2, 3], closure: LACE }, { colour: BLK, images: [4, 5, 6], closure: VELCRO }, { colour: WG, images: [7, 8, 9], closure: LACE }] },
+          { slug: 'top-king', name: 'TRIBE Pro', type: BOXING, material: LEATHER, images: 6, colours: [{ colour: BGD, images: [1, 2, 3] }, { colour: GGD, images: [4, 5, 6] }] },
+          { slug: 'twins', name: 'TRIBE Advance', type: BOXING, material: LEATHER, images: 3, colours: [{ colour: BGN, images: [1, 2, 3] }] },
         ],
       },
       {
         id: 'elite',
         models: [
-          { slug: 'apex', name: 'Apex', type: BOXING, material: LEATHER, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'glory', name: 'Glory', type: BOXING, material: MICRO, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'fly', name: 'Fly', type: BOXING, material: MICRO, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'apex', name: 'TRIBE Apex', type: BOXING, material: LEATHER, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory', name: 'TRIBE Signature', type: BOXING, material: MICRO, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly', name: 'TRIBE Prestige', type: BOXING, material: MICRO, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
         ],
       },
     ],
@@ -165,34 +169,34 @@ export const CATEGORIES: Category[] = [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala-headguard', name: 'Aiba', type: HEAD, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
-          { slug: 'dotline-headguard', name: 'AD', type: HEAD, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
-          { slug: 'warrior-headguard', name: 'RDX', type: HEAD, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
-          { slug: 'mandala-shinguard', name: 'Aiba', type: SHIN, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
-          { slug: 'dotline-shinguard', name: 'AD', type: SHIN, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
-          { slug: 'warrior-shinguard', name: 'RDX', type: SHIN, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
+          { slug: 'mandala-headguard', name: 'TRIBE Element', type: HEAD, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'dotline-headguard', name: 'TRIBE Foundation', type: HEAD, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'warrior-headguard', name: 'TRIBE Solid', type: HEAD, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
+          { slug: 'mandala-shinguard', name: 'TRIBE Element', type: SHIN, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'dotline-shinguard', name: 'TRIBE Foundation', type: SHIN, material: PU, images: 6, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }] },
+          { slug: 'warrior-shinguard', name: 'TRIBE Solid', type: SHIN, material: PU, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: BGR, images: [4, 5, 6] }] },
         ],
       },
       {
         id: 'performance',
         models: [
-          { slug: 'performance-apex-headguard', name: 'Apex', type: HEAD, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: WG, images: [4, 5, 6] }] },
-          { slug: 'top-king-headguard', name: 'Top King', type: HEAD, images: 6, colours: [{ colour: BGD, images: [1, 2, 3] }, { colour: GGD, images: [4, 5, 6] }] },
-          { slug: 'twins-headguard', name: 'Twins', type: HEAD, images: 3, colours: [{ colour: GRN, images: [1, 2, 3] }] },
-          { slug: 'performance-apex-shinguard', name: 'Apex', type: SHIN, images: 3, colours: [{ colour: BLK, images: [1, 2, 3] }] },
-          { slug: 'top-king-shinguard', name: 'Top King', type: SHIN, images: 8, colours: [{ colour: BGD, images: [1, 2, 3, 4] }, { colour: GGD, images: [5, 6, 7, 8] }] },
-          { slug: 'twins-shinguard', name: 'Twins', type: SHIN, images: 3, colours: [{ colour: GRN, images: [1, 2, 3] }] },
+          { slug: 'performance-apex-headguard', name: 'TRIBE Apex', type: HEAD, images: 6, colours: [{ colour: BLK, images: [1, 2, 3] }, { colour: WG, images: [4, 5, 6] }] },
+          { slug: 'top-king-headguard', name: 'TRIBE Pro', type: HEAD, images: 6, colours: [{ colour: BGD, images: [1, 2, 3] }, { colour: GGD, images: [4, 5, 6] }] },
+          { slug: 'twins-headguard', name: 'TRIBE Advance', type: HEAD, images: 3, colours: [{ colour: GRN, images: [1, 2, 3] }] },
+          { slug: 'performance-apex-shinguard', name: 'TRIBE Apex', type: SHIN, images: 3, colours: [{ colour: BLK, images: [1, 2, 3] }] },
+          { slug: 'top-king-shinguard', name: 'TRIBE Pro', type: SHIN, images: 8, colours: [{ colour: BGD, images: [1, 2, 3, 4] }, { colour: GGD, images: [5, 6, 7, 8] }] },
+          { slug: 'twins-shinguard', name: 'TRIBE Advance', type: SHIN, images: 3, colours: [{ colour: GRN, images: [1, 2, 3] }] },
         ],
       },
       {
         id: 'elite',
         models: [
-          { slug: 'apex-headguard', name: 'Apex', type: HEAD, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'glory-headguard', name: 'Glory', type: HEAD, images: 4, colours: [{ colour: WG, images: [1, 2, 3, 4] }] },
-          { slug: 'fly-headguard', name: 'Fly', type: HEAD, images: 1, colours: [{ colour: WG, images: [1] }] },
-          { slug: 'apex-shinguard', name: 'Apex', type: SHIN, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'glory-shinguard', name: 'Glory', type: SHIN, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'fly-shinguard', name: 'Fly', type: SHIN, images: 4, colours: [{ colour: WG, images: [1, 2, 3, 4] }] },
+          { slug: 'apex-headguard', name: 'TRIBE Apex', type: HEAD, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-headguard', name: 'TRIBE Signature', type: HEAD, images: 4, colours: [{ colour: WG, images: [1, 2, 3, 4] }] },
+          { slug: 'fly-headguard', name: 'TRIBE Prestige', type: HEAD, images: 1, colours: [{ colour: WG, images: [1] }] },
+          { slug: 'apex-shinguard', name: 'TRIBE Apex', type: SHIN, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-shinguard', name: 'TRIBE Signature', type: SHIN, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly-shinguard', name: 'TRIBE Prestige', type: SHIN, images: 4, colours: [{ colour: WG, images: [1, 2, 3, 4] }] },
         ],
       },
     ],
@@ -213,22 +217,22 @@ export const CATEGORIES: Category[] = [
       {
         id: 'essential',
         models: [
-          { slug: 'mandala-focus-pads', name: 'Aiba', type: FOCUS, material: PU, images: 6, colours: [{ colour: BW, images: [1, 3, 4] }, { colour: BLK, images: [2, 5, 6] }] },
-          { slug: 'warrior-focus-pads', name: 'RDX', type: FOCUS, material: PU, images: 2, colours: [{ colour: BW, images: [1, 2] }] },
+          { slug: 'mandala-focus-pads', name: 'TRIBE Element', type: FOCUS, material: PU, images: 6, colours: [{ colour: BW, images: [1, 3, 4] }, { colour: BLK, images: [2, 5, 6] }] },
+          { slug: 'warrior-focus-pads', name: 'TRIBE Solid', type: FOCUS, material: PU, images: 2, colours: [{ colour: BW, images: [1, 2] }] },
         ],
       },
-      { id: 'performance', models: [], planned: { en: 'Performance coaching line, presented at ISPO 2026.', nl: 'Performance-trainersmateriaal, gepresenteerd op ISPO 2026.' } },
+      { id: 'performance', models: [], planned: { en: 'The Performance coaching line is coming soon.', nl: 'De Performance-lijn trainersmateriaal komt binnenkort.' } },
       {
         id: 'elite',
         models: [
-          { slug: 'glory-focus-long', name: 'Glory Long', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'glory-focus-short', name: 'Glory Short', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'glory-focus-mini', name: 'Glory Mini', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'fly-focus-pads', name: 'Fly', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'apex-arm-pads', name: 'Apex', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'glory-arm-pads', name: 'Glory', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'fly-arm-pads', name: 'Fly', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
-          { slug: 'glory-belly-pads', name: 'Glory', type: BELLY, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-focus-long', name: 'TRIBE Signature Long', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-focus-short', name: 'TRIBE Signature Short', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-focus-mini', name: 'TRIBE Signature Mini', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly-focus-pads', name: 'TRIBE Prestige', type: FOCUS, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'apex-arm-pads', name: 'TRIBE Apex', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-arm-pads', name: 'TRIBE Signature', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'fly-arm-pads', name: 'TRIBE Prestige', type: ARM, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
+          { slug: 'glory-belly-pads', name: 'TRIBE Signature', type: BELLY, images: 3, colours: [{ colour: WG, images: [1, 2, 3] }] },
         ],
       },
     ],
@@ -265,10 +269,24 @@ export const CATEGORIES: Category[] = [
         id: 'apparel',
         name: { en: 'Fightwear', nl: 'Fightwear' },
         intro: {
-          en: 'Fightwear in the same design language as your equipment, presented at ISPO 2026.',
-          nl: 'Fightwear in dezelfde designtaal als je materiaal, gepresenteerd op ISPO 2026.',
+          en: 'Thai shorts and MMA apparel in the same design language as your equipment.',
+          nl: 'Thaiboks-shorts en MMA-kleding in dezelfde designtaal als je materiaal.',
         },
-        models: [],
+        models: [
+          {
+            slug: 'thai-shorts', name: 'Thai Shorts', type: { en: 'Thai shorts', nl: 'Thaiboks-shorts' }, images: 12,
+            colours: [
+              { colour: WG, images: [1, 2] }, { colour: BGD, images: [3, 4] }, { colour: BW, images: [5, 6] },
+              { colour: BSL, images: [7, 8] }, { colour: WBK, images: [9, 10] }, { colour: BLK, images: [11, 12] },
+            ],
+          },
+          {
+            slug: 'mma-apparel', name: 'MMA Set', type: { en: 'MMA apparel', nl: 'MMA-kleding' }, images: 8,
+            colours: [
+              { colour: GCM, images: [1, 2] }, { colour: BW, images: [3, 4] }, { colour: BLK, images: [5, 6] }, { colour: MNT, images: [7, 8] },
+            ],
+          },
+        ],
       },
     ],
   },

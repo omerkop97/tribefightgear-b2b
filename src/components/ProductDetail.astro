@@ -2,7 +2,6 @@
 import Base from '../layouts/Base.astro';
 import Icon from './Icon.astro';
 import Lightbox from './Lightbox.astro';
-import Customise from './Customise.astro';
 import ProductCard from './ProductCard.astro';
 import CtaStrip from './CtaStrip.astro';
 import { CATEGORIES } from '../data/products';
@@ -19,7 +18,7 @@ const title = p.title[lang];
 const angles = Array.from({ length: p.images }, (_, i) => i + 1);
 const colour = p.colour.name[lang];
 const others = siblings(p);
-const ask = whatsappUrl(d.shop.requestMsg.replace('{title}', `${title} (${colour})`).replace('{sku}', p.sku));
+const ask = whatsappUrl(d.shop.requestMsg.replace('{title}', `${title} (${colour})`));
 const categoryPath = `/products/${p.category}`;
 // A line page exists only when the category has more than one line (Accessories has just one).
 const linePath = linesInCategory(p.category).length > 1 ? `${categoryPath}/${p.line}` : categoryPath;
@@ -30,7 +29,7 @@ const related = PRODUCTS.filter((x) => x.category === p.category && x !== p)
   .slice(0, 6);
 
 ---
-<Base lang={lang} path={productPath(p)} title={`${title} ${colour} (${p.sku})`} description={`${title}, ${line.name[lang]}. ${line.body[lang]}`}>
+<Base lang={lang} path={productPath(p)} title={`${title} ${colour}`} description={`${title}, ${line.name[lang]}. ${line.body[lang]}`}>
   <section class="pd">
     <div class="container">
       <nav class="crumbs" aria-label="Breadcrumb">
@@ -76,7 +75,6 @@ const related = PRODUCTS.filter((x) => x.category === p.category && x !== p)
           <a class:list={['pd__line', `pd__line--${p.line}`]} href={localePath(lang, linePath)}>{line.name[lang]}</a>
           <h1 class="pd__title">{title}</h1>
           <p class="pd__colour">{colour}</p>
-          <p class="pd__sku">{d.shop.sku} {p.sku}</p>
 
           <dl class="pd__specs">
             <div><dt>{d.shop.type}</dt><dd>{p.type[lang]}</dd></div>
@@ -119,7 +117,6 @@ const related = PRODUCTS.filter((x) => x.category === p.category && x !== p)
     </div>
   </section>
 
-  <Customise lang={lang} />
 
   {related.length > 0 && (
     <section class="section related">
@@ -174,7 +171,6 @@ const related = PRODUCTS.filter((x) => x.category === p.category && x !== p)
   .pd__swatch:hover img { border-color: var(--ink-3); }
   .pd__swatch.is-current img { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
   .pd__swatch.is-current { color: var(--ink); }
-  .pd__sku { margin-top: -10px; font-size: 0.95rem; letter-spacing: 0.08em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
   .pd__specs { margin: 0; display: grid; border-top: 1px solid var(--line); }
   .pd__specs div { display: grid; grid-template-columns: 140px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   .pd__specs dt { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); align-self: center; }

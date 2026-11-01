@@ -15,7 +15,6 @@ const href = localePath(lang, productPath(p));
     <h3 class="pcard__title">{p.title[lang]}</h3>
     <div class="pcard__meta">
       <span class="pcard__colour">{p.colour.name[lang]}</span>
-      <span class="pcard__sku">{p.sku}</span>
     </div>
   </div>
 </a>
@@ -36,5 +35,4 @@ const href = localePath(lang, productPath(p));
   .pcard__title { font-size: 1.15rem; letter-spacing: 0.03em; line-height: 1.1; transition: color 0.25s; }
   .pcard:hover .pcard__title { color: var(--accent); }
   .pcard__colour { font-size: 0.85rem; color: var(--ink-2); }
-  .pcard__sku { font-size: 0.72rem; white-space: nowrap; letter-spacing: 0.08em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 </style>

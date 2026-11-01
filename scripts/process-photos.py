@@ -53,6 +53,8 @@ MAP = {
     "Elite/Coaching Equipment/Glory/Belly Pads": ("coaching", "glory-belly-pads"),
     # Collections outside the levels
     "MMA Gloves": ("gloves", "mma-hybrid"),
+    "Fightwear/Thai Shorts": ("fightwear", "thai-shorts"),
+    "Fightwear/MMA Apparel": ("fightwear", "mma-apparel"),
     "Accessories/Speedball": ("fightwear", "speedball"),
     "Accessories/Shin In Step": ("fightwear", "shin-instep"),
     "Accessories/Groin Guards": ("fightwear", "groin-guard"),

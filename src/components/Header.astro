@@ -14,7 +14,7 @@ const other: Lang = lang === 'en' ? 'nl' : 'en';
 const isActive = (to: string) => path === to || path.startsWith(to + '/');
 
 // Only lines without products yet get a note; no product counts.
-const note = (n: number) => (n ? '' : 'ISPO 2026');
+const note = (n: number) => (n ? '' : d.shop.soon);
 
 // Each category opens to its lines (levels, or Accessories / Fightwear).
 const menus = CATEGORIES.map((c) => {
