@@ -1,3 +1,15 @@
+/* ---------- Category cards: random cover per visit ---------- */
+document.querySelectorAll<HTMLElement>('[data-covers]').forEach((stage) => {
+  const img = stage.querySelector('img');
+  let covers: { src: string; srcset: string; frames: string }[] = [];
+  try { covers = JSON.parse(stage.dataset.covers ?? '[]'); } catch { return; }
+  if (!img || covers.length < 2) return;
+  const pick = covers[Math.floor(Math.random() * covers.length)];
+  img.srcset = pick.srcset;
+  img.src = pick.src;
+  stage.dataset.spin = pick.frames;
+});
+
 /* ---------- Mobile menu ---------- */
 const menu = document.querySelector<HTMLElement>('[data-menu]');
 const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');

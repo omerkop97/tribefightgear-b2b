@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import { allModels, img, srcset, TIERS, type Category } from '../data/products';
+import { photo, photoSrcset, productsInCategory } from '../data/shop';
 import { localePath, t, type Lang } from '../i18n';
 
 interface Props { category: Category; index: number; lang: Lang; }
@@ -9,9 +10,15 @@ const d = t(lang);
 const cover = c.cover ? allModels(c).find((m) => m.slug === c.cover) : undefined;
 const chips = c.tiers.length ? c.tiers.map((tier) => TIERS[tier.id].name) : (c.collections ?? []).map((col) => col.name[lang]);
 const frames = cover ? Array.from({ length: cover.images }, (_, i) => img(c.id, cover.slug, i + 1, 700)).join('|') : '';
+// Every product of the category is a cover candidate; ui.ts picks one at random per visit.
+const covers = JSON.stringify(productsInCategory(c.id).map((p) => ({
+  src: photo(p, 1, 700),
+  srcset: photoSrcset(p, 1),
+  frames: p.photos.map((_, n) => photo(p, n + 1, 700)).join('|'),
+})));
 ---
 <a href={localePath(lang, `/products/${c.id}`)} class="ccard">
-  <div class="ccard__stage stage grain" data-spin={frames}>
+  <div class="ccard__stage stage grain" data-spin={frames} data-covers={covers}>
     {cover ? (
       <img src={img(c.id, cover.slug, 1, 700)} srcset={srcset(c.id, cover.slug, 1)} sizes="(min-width: 1024px) 34vw, 80vw" alt={c.name[lang]} width="700" height="700" loading="lazy" />
     ) : (

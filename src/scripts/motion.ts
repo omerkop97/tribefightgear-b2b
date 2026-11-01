@@ -30,22 +30,29 @@ onScroll();
 /* ---------- Product spin: scrub through angles with the pointer ---------- */
 document.querySelectorAll<HTMLElement>('[data-spin]').forEach((el) => {
   const img = el.querySelector('img');
-  const frames = (el.dataset.spin ?? '').split('|').filter(Boolean);
-  if (!img || frames.length < 2) return;
-  const original = img.currentSrc || img.src;
-  let loaded = false;
+  if (!img) return;
+  // Frames and the resting image are read on enter: the cover may have been swapped (random cover).
+  let frames: string[] = [];
+  let original = '';
+  let originalSet = '';
   el.addEventListener('pointerenter', () => {
-    if (loaded) return;
-    loaded = true;
+    frames = (el.dataset.spin ?? '').split('|').filter(Boolean);
+    original = img.getAttribute('src') ?? '';
+    originalSet = img.getAttribute('srcset') ?? '';
     frames.forEach((f) => { const i = new Image(); i.src = f; });
   });
   el.addEventListener('pointermove', (e) => {
+    if (frames.length < 2) return;
     const r = el.getBoundingClientRect();
     const idx = Math.min(frames.length - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * frames.length)));
     img.srcset = '';
     img.src = frames[idx];
   });
-  el.addEventListener('pointerleave', () => { img.src = original; });
+  el.addEventListener('pointerleave', () => {
+    if (!original) return;
+    img.src = original;
+    if (originalSet) img.srcset = originalSet;
+  });
 });
 
 if (reduced) {

@@ -14,20 +14,8 @@ export const ISPO = {
   endsAt: '2026-11-06T00:00:00+01:00',
 };
 
-/*
- * TODO: replace with the public link of a Google Calendar "Appointment schedule"
- * (Google Workspace → Calendar → Create → Appointment schedule → "Open booking page").
- * Until then this opens Google Calendar with a pre-filled meeting at the stand.
- */
-const details = encodeURIComponent(
-  `Meeting with Tribe Gear B2B at ISPO 2026, RAI Amsterdam, stand ${ISPO.stand}.\nConfirm via WhatsApp: +${PHONE_E164}`,
-);
-export const BOOKING_URL =
-  'https://calendar.google.com/calendar/render?action=TEMPLATE' +
-  '&text=' + encodeURIComponent('Meeting Tribe Gear B2B, ISPO 2026') +
-  '&dates=20261104T100000/20261104T103000&ctz=Europe/Amsterdam' +
-  '&location=' + encodeURIComponent(`RAI Amsterdam, Stand ${ISPO.stand}`) +
-  '&details=' + details;
+/** Google Calendar appointment schedule (ISPO meetings). Every "Book a meeting" button uses this. */
+export const BOOKING_URL = 'https://calendar.app.google/WeXy7qgfbDDd6ZGz7';
 
 export function whatsappUrl(message: string) {
   return `https://wa.me/${PHONE_E164}?text=${encodeURIComponent(message)}`;
