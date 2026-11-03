@@ -149,7 +149,7 @@ export const CATEGORIES: Category[] = [
           en: 'Open-finger MMA gloves in three colourways, with the same construction quality as our boxing gloves.',
           nl: 'MMA-handschoenen met open vingers in drie kleurstellingen, met dezelfde bouwkwaliteit als onze bokshandschoenen.',
         },
-        models: [{ slug: 'mma-hybrid', name: 'Venum', type: { en: 'MMA gloves', nl: 'MMA-handschoenen' }, images: 9, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }, { colour: WG, images: [7, 8, 9] }] }],
+        models: [{ slug: 'mma-hybrid', name: 'MMA Shooter', type: { en: 'Gloves', nl: 'Handschoenen' }, images: 9, colours: [{ colour: BW, images: [1, 2, 3] }, { colour: BLK, images: [4, 5, 6] }, { colour: WG, images: [7, 8, 9] }] }],
       },
     ],
   },
