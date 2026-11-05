@@ -38,7 +38,7 @@ const tiles = CATEGORIES.map((c) => {
       <div class="wl__video" data-welcome-video>
         {hasVideo ? (
           <>
-            <video src="/video/welcome.mp4" poster={poster} playsinline preload="metadata" controls></video>
+            <video src="/video/welcome.mp4" poster={poster} playsinline preload="metadata"></video>
             <button class="wl__play" type="button" data-welcome-play aria-label={w.play}>
               <span class="wl__play-icon"><Icon name="play" /></span>
               <span>{w.play}</span>
@@ -83,7 +83,8 @@ const tiles = CATEGORIES.map((c) => {
     const video = box.querySelector('video');
     const btn = box.querySelector<HTMLButtonElement>('[data-welcome-play]');
     if (!video || !btn) return;
-    btn.addEventListener('click', () => { video.play().catch(() => {}); });
+    // Native controls appear once playing, so they don't overlap the big play button.
+    btn.addEventListener('click', () => { video.controls = true; video.play().catch(() => {}); });
     video.addEventListener('play', () => box.classList.add('is-playing'));
   });
 </script>
